@@ -53,7 +53,7 @@
 
         <div th:each="card : ${cardList}">
             <p>Numero: <span th:text="${cardStat.count}">index</span> / total </p>
-            <p className="score">Punti: </p>
+            <p class="score">Punti: </p>
             <div>
                 <button th:onclick="handleControlAnswer()">←</button>
                 <button th:onclick="handleControlAnswer()">→</button>
