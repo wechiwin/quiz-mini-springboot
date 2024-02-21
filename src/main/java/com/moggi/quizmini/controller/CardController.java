@@ -6,11 +6,13 @@ import com.moggi.quizmini.excel.ExcelExportHandler;
 import com.moggi.quizmini.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * <p>
@@ -39,5 +41,12 @@ public class CardController {
     @RequestMapping("downloadTemplate")
     public void downloadTemplate(HttpServletResponse response) {
         excelExportHandler.downloadTemplate(response, "人员表", Card.class);
+    }
+
+    @RequestMapping("listByFoPkid")
+    public String listByFoPkid(Model model, String foPkid) {
+        List<Card> list = cardService.listByFoPkid(foPkid);
+        model.addAttribute("cardList", list);
+        return "card"; // 返回xx页面
     }
 }

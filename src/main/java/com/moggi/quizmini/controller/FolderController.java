@@ -30,7 +30,7 @@ public class FolderController {
         List<Folder> folderList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             Folder folder = new Folder();
-            folder.setFoName("asdf");
+            folder.setFoName("asdf" + i);
             folderList.add(folder);
         }
 
@@ -50,4 +50,5 @@ public class FolderController {
         model.addAttribute("folderList", folderList);
         return "Quiz.js"; // 返回xx页面
     }
+
 }

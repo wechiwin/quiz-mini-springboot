@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="app" style=".header">
+  <h2>Categoria: </h2>
+  <h2 th:text="${folder.foName}">nome</h2>
+
+  <div>
+    <div class="list-item" th:each="card : ${cardList}">
+      <h2 th:text="${cardList.count}">index</h2>
+      <h2>. </h2>
+      <h2 th:text="${card.verb}">index</h2>
+      <h2> -- </h2>
+      <h2 th:text="${card.grammaticalPerson}">index</h2>
+      <div class="inputArea">
+        <input type="text" spellcheck="false">
+        <button>Controlla</button>
+      </div>
+      <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
+      <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
+    </div>
+  </div>
+</div>
+</body>
+</html>

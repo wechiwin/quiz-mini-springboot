@@ -3,6 +3,8 @@ package com.moggi.quizmini.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.moggi.quizmini.entity.Card;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -14,5 +16,7 @@ import com.moggi.quizmini.entity.Card;
 public interface CardService extends IService<Card> {
 
     boolean upload(byte[] bytes);
+
+    List<Card> listByFoPkid(String foPkid);
 
 }

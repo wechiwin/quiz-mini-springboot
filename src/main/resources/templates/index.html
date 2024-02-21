@@ -15,7 +15,7 @@
     <div class="list-item" th:each="folder : ${folderList}">
       <p
           th:text="${folder.foName}"
-          th:href="@{/card/detail(prodId=${folder.foPkid})}">测试</p>
+          th:href="@{/card/listByFoPkid(foPkid=${folder.foPkid})}">测试</p>
       <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
       <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
     </div>
