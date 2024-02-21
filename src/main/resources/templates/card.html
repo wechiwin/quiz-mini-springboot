@@ -1,32 +1,69 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-  <script src="/common/common-js.js" type="application/javascript"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Title</title>
+    <script src="/common/common-js.js" type="application/javascript"></script>
 </head>
 <body>
 <div id="app">
-  <h2>Categoria: </h2>
-  <h2 th:text="${folder.foName}">nome</h2>
-
-  <div>
-    <div class="list-item" th:each="card : ${cardList}">
-      <h2 th:text="${cardStat.count}">index</h2>
-      <h2>. </h2>
-      <h2 th:text="${card.verb}">index</h2>
-      <h2> -- </h2>
-      <h2 th:text="${card.grammaticalPerson}">index</h2>
-      <div class="inputArea">
-        <label>
-          <input type="text" spellcheck="false">
-        </label>
-        <button>Controlla</button>
-      </div>
-      <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
-      <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
+    <div class="header">
+        <a th:href="@{/}" class="header-text">Studiamo!</a>
     </div>
-  </div>
+
+    <div>
+        <div>
+            <h2>
+                Categoria: <span th:text="${folder.foName}">nome</span>
+            </h2>
+
+        </div>
+
+
+        <div>
+            <div class="list-item" th:each="card : ${cardList}">
+                <h2>
+                    <span th:text="${cardStat.count}">index</span>. <span th:text="${card.verb}">index</span> -- <span
+                        th:text="${card.grammaticalPerson}">index</span>
+                </h2>
+
+
+                <div class="inputArea">
+                    <label>
+                        <input type="text" spellcheck="false" id="inputText">
+                    </label>
+                    <button th:onclick="handleControlAnswer()">Controlla</button>
+                </div>
+                <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
+                <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
+            </div>
+        </div>
+
+        <div>
+            <!-- 在 th:attr 中设置动态内容 -->
+            <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>
+            <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>
+            <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>
+            <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>
+            <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>
+        </div>
+
+        <hr/>
+
+        <div th:each="card : ${cardList}">
+            <p>Numero: <span th:text="${cardStat.count}">index</span> / total </p>
+            <p class="score">Punti: </p>
+            <div>
+                <button th:onclick="handleControlAnswer()">←</button>
+                <button th:onclick="handleControlAnswer()">→</button>
+            </div>
+        </div>
+
+
+    </div>
+
+
 </div>
 
 <script>
@@ -38,5 +75,149 @@
         methods: {}
     })
 </script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function handleControlAnswer() {
+        alert('Button clicked!');
+    }
+
+    function handlePaste(button) {
+        // 获取按钮上的动态内容
+        var dynamicContent = button.getAttribute('data-content');
+
+        // 创建一个临时的textarea元素
+        var tempTextarea = document.createElement("textarea");
+        // 设置textarea的值为要复制的内容
+        tempTextarea.value = dynamicContent;
+        // 设置textarea的值为动态内容
+        tempTextarea.value = dynamicContent;
+        // 将textarea添加到DOM中
+        document.body.appendChild(tempTextarea);
+        // 选择textarea的内容
+        tempTextarea.select();
+        // 执行复制操作
+        document.execCommand('copy');
+        // 从DOM中移除textarea
+        document.body.removeChild(tempTextarea);
+
+        // 将复制的内容粘贴到input框中
+        document.getElementById('inputText').value += dynamicContent;
+
+        // 这里可以添加其他处理逻辑，例如提示用户复制成功
+        // alert('Copied: ' + dynamicContent);
+    }
+
+    /*]]>*/
+</script>
+
 </body>
+
+<style>
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f8fa;
+        padding: 0;
+    }
+
+    code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+    }
+
+    h2 {
+        font-size: 2em;
+    }
+
+    #app {
+        text-align: center;
+    }
+
+    .header {
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /*width: 100vw;*/
+        /*background-color: #bcd2e8; !* Twitter-like blue background color *!*/
+        /*border-bottom: 1px solid #0f89d1; !* Slightly darker border color *!*/
+    }
+
+    .header-text {
+        color: #1da1f2;
+        text-decoration: underline;
+        text-align: center;
+        display: block;
+        font-size: 2em;
+        margin-block-start: 0.67em;
+        margin-block-end: 0.67em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    p {
+        color: #66757f;
+        margin-top: 10px;
+    }
+
+    button {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #1da1f2;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0e81d4;
+    }
+
+    button:disabled {
+        background-color: darkgrey;
+        cursor: not-allowed;
+    }
+
+    .copyButton {
+        color: #1da1f2;
+        background: azure;
+    }
+
+    .copyButton:hover {
+        color: white;
+        /*font-weight: bold;*/
+        /*background: coral;*/
+    }
+
+    input {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #e1e8ed;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    textarea {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #e1e8ed;
+        border-radius: 5px;
+        font-size: 18px;
+        font-family: 'Arial', sans-serif;
+        width: 400px;
+        height: 100px;
+    }
+
+</style>
+
 </html>
