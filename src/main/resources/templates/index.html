@@ -11,19 +11,19 @@
 <body>
 <div id="app">
   <div class="header">
-    <h1 th:href="@{/}">Studiamo!</h1>
+    <a th:href="@{/}" class="header-text">Studiamo!</a>
   </div>
 
 
   <div id="folderList" class="list-content">
-    <div class="list-item" th:each="folder : ${folderList}">
+    <div class="" th:each="folder : ${folderList}">
       <a class="list-item"
          th:text="${folder.foName}"
          th:href="@{/card/listByFoPkid(foPkid=${folder.foPkid})}"
       >测试</a>
-      <span
-              th:text="${folder.foName}"
-              th:href="@{/card/listByFoPkid(foPkid=${folder.foPkid})}">测试</span>
+      <!--      <span-->
+      <!--              th:text="${folder.foName}"-->
+      <!--              th:href="@{/card/listByFoPkid(foPkid=${folder.foPkid})}">测试</span>-->
       <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
       <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
     </div>
@@ -58,12 +58,6 @@
   }
 
 
-  h1 {
-    color: #1da1f2;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-
   .header {
     padding: 10px 20px;
     display: flex;
@@ -74,21 +68,19 @@
     /*border-bottom: 1px solid #0f89d1; !* Slightly darker border color *!*/
   }
 
-  a {
+  .header-text {
     color: #1da1f2;
     text-decoration: underline;
     text-align: center;
-  }
-
-  a {
     display: block;
     font-size: 2em;
-        margin-block-start: 0.67em;
-        margin-block-end: 0.67em;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        font-weight: bold;
-    }
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  }
+
 
   body {
     font-family: 'Arial', sans-serif;
@@ -123,6 +115,7 @@
       background-color: #ffffff;
       transition: background-color 0.3s ease;
       text-align: center;
+      text-decoration: none;
     }
 
     .list-item:hover {
@@ -157,6 +150,7 @@
       background-color: #ffffff;
       transition: background-color 0.3s ease;
       text-align: center;
+      text-decoration: none;
     }
 
     .list-item:hover {
