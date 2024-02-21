@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <script src="/common/common-js.js" type="application/javascript"></script>
 </head>
 <body>
-<div id="app" style=".header">
+<div id="app">
   <h2>Categoria: </h2>
   <h2 th:text="${folder.foName}">nome</h2>
 
   <div>
     <div class="list-item" th:each="card : ${cardList}">
-      <h2 th:text="${cardList.count}">index</h2>
+      <h2 th:text="${cardStat.count}">index</h2>
       <h2>. </h2>
       <h2 th:text="${card.verb}">index</h2>
       <h2> -- </h2>
       <h2 th:text="${card.grammaticalPerson}">index</h2>
       <div class="inputArea">
-        <input type="text" spellcheck="false">
+        <label>
+          <input type="text" spellcheck="false">
+        </label>
         <button>Controlla</button>
       </div>
       <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
@@ -25,5 +28,15 @@
     </div>
   </div>
 </div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+
+        },
+        methods: {}
+    })
+</script>
 </body>
 </html>
