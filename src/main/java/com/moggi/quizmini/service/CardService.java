@@ -1,6 +1,7 @@
 package com.moggi.quizmini.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.entity.Card;
 
 import java.util.List;
@@ -15,8 +16,10 @@ import java.util.List;
  */
 public interface CardService extends IService<Card> {
 
-    boolean upload(byte[] bytes);
+    // boolean upload(byte[] bytes);
 
     List<Card> listByFoPkid(String foPkid);
+
+    boolean upload(List<CardExcelDTO> excelDTOList);
 
 }
