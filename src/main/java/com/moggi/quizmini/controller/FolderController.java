@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,12 +26,13 @@ public class FolderController {
 
     @RequestMapping("/")
     public String home(Model model) {
-        List<Folder> folderList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Folder folder = new Folder();
-            folder.setFoName("asdf" + i);
-            folderList.add(folder);
-        }
+        List<Folder> folderList = folderService.list();
+        // List<Folder> folderList = new ArrayList<>();
+        // for (int i = 0; i < 20; i++) {
+        //     Folder folder = new Folder();
+        //     folder.setFoName("asdf" + i);
+        //     folderList.add(folder);
+        // }
 
         model.addAttribute("folderList", folderList);
         return "index";
