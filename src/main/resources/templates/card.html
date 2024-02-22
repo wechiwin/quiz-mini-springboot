@@ -17,26 +17,38 @@
             <h2>
                 Categoria: <span th:text="${folder.foName}">nome</span>
             </h2>
-
         </div>
 
-
         <div>
-            <div class="list-item" th:each="card : ${cardList}">
+            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"
+                 id="firstQuestion">
                 <h2>
-                    <span th:text="${cardStat.count}">index</span>. <span th:text="${card.verb}">index</span> -- <span
-                        th:text="${card.grammaticalPerson}">index</span>
+                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> -- <span
+                        th:text="${card.grammaticalPerson}"></span>
                 </h2>
 
+                <div class="inputArea">
+                    <label>
+                        <input type="text" spellcheck="false" id="firstInputText">
+                    </label>
+                    <button th:onclick="handleControlAnswer(0)">Controlla</button>
+                </div>
+            </div>
 
+            <div class="list-item hideQuestion" th:each="card, cardStat : ${cardList}"
+                 th:id="'question' + (${cardStat.index}+1)">
+                <h2>
+                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> -- <span
+                        th:text="${card.grammaticalPerson}"></span>
+                </h2>
                 <div class="inputArea">
                     <label>
                         <input type="text" spellcheck="false" id="inputText">
                     </label>
-                    <button th:onclick="handleControlAnswer()">Controlla</button>
+                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">
+                        Controlla
+                    </button>
                 </div>
-                <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
-                <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
             </div>
         </div>
 
@@ -78,8 +90,14 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    function handleControlAnswer() {
-        alert('Button clicked!');
+    function handleControlAnswer(index, count) {
+        if (index == 0) {
+            console.log('ok')
+            var firstQuestionDiv = document.getElementById('firstQuestion');
+            firstQuestionDiv.classList.add('hideQuestion');
+            document.getElementById('question2').classList.remove('hideQuestion')
+        }
+        console.log(count)
     }
 
     function handlePaste(button) {
@@ -107,6 +125,7 @@
         // 这里可以添加其他处理逻辑，例如提示用户复制成功
         // alert('Copied: ' + dynamicContent);
     }
+
 
     /*]]>*/
 </script>
@@ -216,6 +235,14 @@
         font-family: 'Arial', sans-serif;
         width: 400px;
         height: 100px;
+    }
+
+    .hideQuestion {
+        display: none;
+    }
+
+    .showQuestion {
+        display: block;
     }
 
 </style>
