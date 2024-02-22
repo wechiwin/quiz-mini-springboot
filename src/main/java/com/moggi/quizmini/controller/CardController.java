@@ -70,6 +70,6 @@ public class CardController {
         Folder folder = folderService.getById(foPkid);
         mav.addObject("folder", folder);
         mav.addObject("cardList", list);
-        return mav; // 返回xx页面
+        return mav;
     }
 }

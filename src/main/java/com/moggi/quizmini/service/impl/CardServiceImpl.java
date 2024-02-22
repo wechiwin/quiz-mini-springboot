@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -60,15 +57,31 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         // Set<String> foNames = excelDTOList.stream().map(CardExcelDTO::getFoName).collect(Collectors.toSet());
         List<Folder> folderList = folderMapper.selectList(new LambdaQueryWrapper<Folder>().in(Folder::getFoName, foNames));
         if (CollectionUtils.isEmpty(folderList)) return false;
-        Map<String, Integer> foNameAndPkidMap = folderList.stream().collect(Collectors.toMap(Folder::getFoName, Folder::getFoPkid, (v1, v2) -> v2));
+        Map<String, Integer> foNameAndFoPkidMap = folderList.stream().collect(Collectors.toMap(Folder::getFoName, Folder::getFoPkid, (v1, v2) -> v2));
+
+        // 查询foName相关card
+        List<Card> relatedCards = mapper.selectList(
+                new LambdaQueryWrapper<Card>()
+                        .in(Card::getFoPkid, foNameAndFoPkidMap.values())
+        );
+        Map<Integer, List<Card>> foPkidAndRelatedMap = relatedCards.stream().collect(Collectors.groupingBy(Card::getFoPkid));
+
         for (Map.Entry<String, List<CardExcelDTO>> entry : groupByFoName.entrySet()) {
             String foName = entry.getKey();
             List<CardExcelDTO> dtoList = entry.getValue();
 
-            Integer foPkid = foNameAndPkidMap.get(foName);
+            Integer foPkid = foNameAndFoPkidMap.get(foName);
+            List<String> existCardNames = Optional.ofNullable(foPkidAndRelatedMap.get(foPkid)).orElse(Collections.emptyList())
+                    .stream()
+                    .map(card -> card.getGrammaticalPerson() + "-" + card.getVerb())
+                    .collect(Collectors.toList());
 
             List<Card> cards = new ArrayList<>(dtoList.size());
             for (CardExcelDTO excelDTO : dtoList) {
+                // 检查数据是否重复
+                if (existCardNames.contains(excelDTO.getGrammaticalPerson() + "-" + excelDTO.getVerb())) {
+                    continue;
+                }
                 Card card = new Card();
                 BeanUtils.copyProperties(excelDTO, card);
                 card.setFoPkid(foPkid);
