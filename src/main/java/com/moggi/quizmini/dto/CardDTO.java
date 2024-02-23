@@ -1,9 +1,7 @@
 package com.moggi.quizmini.dto;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,44 +21,58 @@ public class CardDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "ca_pkid", type = IdType.ASSIGN_ID)
+    @ExcelIgnore
     private Integer caPkid;
 
+    @ExcelIgnore
     private Integer foPkid;
 
     /**
      * 人称
      */
+    @ExcelProperty(value = "人称")
     private String grammaticalPerson;
 
     /**
      * 动词原形/句子原文
      */
+    @ExcelProperty(value = "动词原形/句子原文")
     private String verb;
+
     /**
      * 动词变位/句子翻译
      */
+    @ExcelProperty(value = "动词变位/句子翻译")
     private String conjugation;
 
     /**
      * 例句
      */
+    @ExcelProperty(value = "例句")
     private String egSentence;
 
     /**
      * 重学时间
      */
+    @ExcelIgnore
     private String reviewTime;
+
     /**
      * 是否标熟
      */
+    @ExcelIgnore
     private String ifDone;
 
-    @TableField(fill = FieldFill.INSERT)
+    @ExcelIgnore
     private String createTime;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @ExcelIgnore
     private String modifyTime;
+
+    // =================
+
+    @ExcelProperty(value = "类别名称")
+    private String foName;
 
 
 }

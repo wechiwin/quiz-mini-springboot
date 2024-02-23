@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -29,10 +30,10 @@ public class Folder implements Serializable {
     private String foName;
 
     @TableField(fill = FieldFill.INSERT)
-    private String createTime;
+    private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String modifyTime;
+    private LocalDateTime modifyTime;
 
 
 }

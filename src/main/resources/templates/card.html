@@ -25,7 +25,7 @@
             <div class="list-item" th:each="card : ${cardList}">
                 <h2>
                     <span th:text="${cardStat.count}">index</span>. <span th:text="${card.verb}">index</span> -- <span
-                        th:text="${card.grammaticalPerson}">index</span>
+                    th:text="${card.grammaticalPerson}">index</span>
                 </h2>
 
 
@@ -35,8 +35,6 @@
                     </label>
                     <button th:onclick="handleControlAnswer()">Controlla</button>
                 </div>
-                <!--            <a href="javascript:;" @click="addCartItem">加入购物车</a>-->
-                <!--            <input th:value="${folder.foPkid}" type="hidden"/>-->
             </div>
         </div>
 
