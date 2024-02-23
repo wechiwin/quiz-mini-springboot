@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Title</title>
     <script src="/common/common-js.js" type="application/javascript"></script>
+    <script src="/js/axios.min.js" type="application/javascript"></script>
+    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>
+
 </head>
 <body>
-<div id="app">
+<div id="app" th:attr="data-cardList=${cardList}">
     <div class="header">
         <a th:href="@{/}" class="header-text">Studiamo!</a>
     </div>
@@ -20,36 +23,49 @@
         </div>
 
         <div>
-            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"
-                 id="firstQuestion">
-                <h2>
-                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> -- <span
-                        th:text="${card.grammaticalPerson}"></span>
-                </h2>
+            <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"-->
+            <!--                 id="firstQuestion">-->
+            <!--                <h2>-->
+            <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
+            <!--                        th:text="${card.grammaticalPerson}"></span>-->
+            <!--                </h2>-->
 
-                <div class="inputArea">
-                    <label>
-                        <input type="text" spellcheck="false" id="firstInputText">
-                    </label>
-                    <button th:onclick="handleControlAnswer(0)">Controlla</button>
-                </div>
-            </div>
+            <!--                <div class="inputArea">-->
+            <!--                    <label>-->
+            <!--                        <input type="text" spellcheck="false" id="firstInputText">-->
+            <!--                    </label>-->
+            <!--                    <button th:onclick="handleControlAnswer(0)">Controlla</button>-->
+            <!--                </div>-->
+            <!--            </div>-->
 
-            <div class="list-item hideQuestion" th:each="card, cardStat : ${cardList}"
-                 th:id="'question' + (${cardStat.index}+1)">
-                <h2>
-                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> -- <span
-                        th:text="${card.grammaticalPerson}"></span>
-                </h2>
-                <div class="inputArea">
-                    <label>
-                        <input type="text" spellcheck="false" id="inputText">
-                    </label>
-                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">
-                        Controlla
-                    </button>
-                </div>
-            </div>
+            <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:id="questions">-->
+            <!--                <h2>-->
+            <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
+            <!--                        th:text="${card.grammaticalPerson}"></span>-->
+            <!--                </h2>-->
+            <!--                <div class="inputArea">-->
+            <!--                    <label>-->
+            <!--                        <input type="text" spellcheck="false" id="inputText">-->
+            <!--                    </label>-->
+            <!--                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">-->
+            <!--                        Controlla-->
+            <!--                    </button>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+            <!--            <div class="list-item" v-for="(question,index) in cardList">-->
+            <!--                <h2>-->
+            <!--                    {index+1}. {question.verb} &#45;&#45; {question.grammaticalPerson}-->
+            <!--                </h2>-->
+            <!--            </div>-->
+
+            <!--            <div class="list-item" v-for="(question, index) in cardList">-->
+            <!--                <h2>-->
+            <!--                    {{ index+1 }}. {{ question.verb }} &#45;&#45; {{ question.grammaticalPerson }}-->
+            <!--                </h2>-->
+            <!--            </div>-->
+
+
         </div>
 
         <div>
@@ -81,8 +97,24 @@
 <script>
     new Vue({
         el: '#app',
-        data() {
+        data: {
+            isCorrect: false,
+            currentIndex: 0,
+            cardList: [],
+        },
+        mounted() {
+            // 在 mounted 钩子中获取后端数据
+            this.cardList = JSON.parse(document.getElementById('app').getAttribute('data-cardList'));
+            console.log(this.cardList)
 
+            const rawData = document.getElementById('app').getAttribute('data-cardList');
+            console.log('Raw data from attribute:', rawData);
+
+            try {
+                this.cardList = JSON.parse(rawData) || [];
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
         },
         methods: {}
     })
@@ -131,6 +163,10 @@
 </script>
 
 </body>
+
+<!--<script th:src="@{/static/js/axios.min.js}"></script>-->
+<!--<script th:src="@{/static/js/common.js}"></script>-->
+<!--<script th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 
 <style>
     body {
