@@ -2,10 +2,13 @@ package com.moggi.quizmini.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.moggi.quizmini.constant.ForgettingCurveEnum;
 import com.moggi.quizmini.constant.YesOrNoEnum;
+import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.entity.Folder;
+import com.moggi.quizmini.framework.pojo.Converter;
 import com.moggi.quizmini.mapper.CardMapper;
 import com.moggi.quizmini.mapper.FolderMapper;
 import com.moggi.quizmini.service.CardService;
@@ -13,6 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -49,7 +53,10 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     //     return true;
     // }
 
+    private Converter<CardDTO, Card> cardConverter = new Converter<>(CardDTO.class, Card.class);
+
     @Override
+    @Transactional
     public boolean upload(List<CardExcelDTO> excelDTOList) {
         // 查询folder信息
         Map<String, List<CardExcelDTO>> groupByFoName = excelDTOList.stream().collect(Collectors.groupingBy(CardExcelDTO::getFoName));
@@ -102,5 +109,28 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         wrapper.eq(Card::getFoPkid, foPkid);
         List<Card> list = mapper.selectList(wrapper);
         return list;
+    }
+
+    @Override
+    @Transactional
+    public Boolean completeBatch(List<CardDTO> cardDTOList) {
+        for (CardDTO cardDTO : cardDTOList) {
+            // 答错
+            if (cardDTO.getIfCorrect().equals(YesOrNoEnum.No.getVal())) {
+                cardDTO.setHitTimes(0);
+                cardDTO.setReviewTime(LocalDate.now().plusDays(1));
+            } else { // 答对
+                cardDTO.setHitTimes(cardDTO.getHitTimes() + 1);
+                int days = ForgettingCurveEnum.getDaysByHitTimes(cardDTO.getHitTimes());
+                if (days == -1) {
+                    cardDTO.setIfDone(YesOrNoEnum.Yes.getVal());
+                } else {
+                    cardDTO.setReviewTime(LocalDate.now().plusDays(days));
+                }
+            }
+        }
+        List<Card> cardList = cardConverter.toEntityList(cardDTOList);
+        int i = mapper.updateBatch(cardList);
+        return true;
     }
 }

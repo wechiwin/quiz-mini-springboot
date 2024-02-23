@@ -60,6 +60,12 @@ public class Card implements Serializable {
      */
     private Integer ifDone;
 
+    /**
+     * 连续成功次数
+     * 如果失败的话，hit_times需要重置
+     */
+    private Integer hitTimes;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 

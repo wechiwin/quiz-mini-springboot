@@ -1,6 +1,7 @@
 package com.moggi.quizmini.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.entity.Card;
 
@@ -22,4 +23,5 @@ public interface CardService extends IService<Card> {
 
     boolean upload(List<CardExcelDTO> excelDTOList);
 
+    Boolean completeBatch(List<CardDTO> cardDTOList);
 }
