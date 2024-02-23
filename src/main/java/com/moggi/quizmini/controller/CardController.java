@@ -4,6 +4,7 @@ package com.moggi.quizmini.controller;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
+import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.entity.Folder;
@@ -12,10 +13,11 @@ import com.moggi.quizmini.excel.ExcelReadListener;
 import com.moggi.quizmini.service.CardService;
 import com.moggi.quizmini.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,7 +32,7 @@ import java.util.List;
  * @author wechiwin
  * @since 2024-02-07
  */
-@Controller
+@RestController
 @RequestMapping("/card")
 public class CardController {
     @Autowired
@@ -42,7 +44,6 @@ public class CardController {
     private ExcelExportHandler excelExportHandler;
 
     @PostMapping("upload")
-    @Transactional
     public void upload(@RequestParam("file") MultipartFile file) throws Exception {
         ExcelReadListener<CardExcelDTO> readListener = new ExcelReadListener<>();
         ExcelReader excelReader = EasyExcel.read(file.getInputStream(), CardExcelDTO.class, readListener).build();
@@ -57,13 +58,12 @@ public class CardController {
         // return "redirect:/folder/list"; // 重定向到list接口
     }
 
-    @RequestMapping("downloadTemplate")
+    @PostMapping("downloadTemplate")
     public void downloadTemplate(HttpServletResponse response) {
         excelExportHandler.downloadTemplate(response, "template", Card.class);
     }
 
-    @GetMapping("listByFoPkid")
-    @ResponseBody
+    @PostMapping("listByFoPkid")
     public ModelAndView listByFoPkid(@RequestParam(value = "foPkid") String foPkid, Model model) {
         ModelAndView mav = new ModelAndView("card");
         List<Card> list = service.listByFoPkid(foPkid);
@@ -71,5 +71,10 @@ public class CardController {
         mav.addObject("folder", folder);
         mav.addObject("cardList", list);
         return mav;
+    }
+
+    @PostMapping("completeBatch")
+    public void completeBatch(List<CardDTO> cardDTOList) {
+        Boolean flag = service.completeBatch(cardDTOList);
     }
 }
