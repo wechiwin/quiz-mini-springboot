@@ -133,6 +133,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
                     cardDTO.setReviewTime(LocalDate.now().plusDays(days));
                 }
             }
+            cardDTO.setLastReviewTime(LocalDate.now());
         }
         List<Card> cardList = cardConverter.toEntityList(cardDTOList);
         int i = mapper.updateBatch(cardList);
@@ -142,8 +143,11 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     @Override
     public List<CardDTO> searchList(CardQueryDTO query) {
         LambdaQueryWrapper<Card> wrapper = new LambdaQueryWrapper<>();
+        wrapper.isNull(Card::getLastReviewTime)
+                .or()
+                .ne(Card::getLastReviewTime, LocalDate.now()); // 当天未学的
         wrapper.eq(Card::getFoPkid, query.getFoPkid());
-        wrapper.orderByAsc(Card::getReviewTime);
+        wrapper.orderByAsc(Card::getReviewTime); // 按照复习时间升序
         wrapper.last("limit 10");
         List<Card> list = mapper.selectList(wrapper);
         List<CardDTO> cardDTOS = cardConverter.toDtoList(list);
