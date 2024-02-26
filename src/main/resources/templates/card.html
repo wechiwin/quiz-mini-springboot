@@ -26,7 +26,8 @@
 
 
         <div class="list-item" v-for="(question, index) in cardList">
-            <div v-show="index+1==currentQuestionIndex">
+            <!--            <div v-show="(index+1)==currentQuestionIndex">-->
+            <div>
                 <h2>
                     {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
                 </h2>
@@ -100,7 +101,7 @@
 
 </div>
 
-<script>
+<script type="text/javascript">
     new Vue({
         el: '#app',
         data() {
@@ -108,8 +109,8 @@
                 isCorrect: false,
                 score: 0,
                 currentQuestionIndex: 1,
-                // cardList: [],
-                cardList: data - cardList,
+                cardList: [],
+                // cardList: data - cardList,
                 total: 0,
                 isCompleted: false,
                 userAnswer: '',
@@ -147,24 +148,24 @@
 
                     // Now 'foPkid' contains the value "-1621147646"
                     console.log('foPkid:', foPkid);
-                    this.getQuestions(foPkid)
+                    this.foPkid = foPkid
 
                 } else {
                     console.log('Parameter not found');
                 }
             },
             getQuestions(foPkid) {
-                this.cardList = [
-                    {id: 1, q: 'aaa'},
-                    {id: 2, q: 'bbb'},
-                ]
+                // this.cardList = [
+                //     {id: 1, q: 'aaa'},
+                //     {id: 2, q: 'bbb'},
+                // ]
 
                 var param = {
                     foPkid
                 }
                 $.ajax({
                     type: "POST",
-                    url: "/quiz/card/listByFoPkid",
+                    url: "/quiz/card/searchList",
                     data: JSON.stringify(param),
                     dataType: "json",
                     contentType: "application/json",
@@ -172,6 +173,7 @@
                         if (result.status == 200) {
                             console.log(result)
                             this.cardList = result.data;
+                            console.log('cardList', this.cardList)
                         }
                     }
                 });
