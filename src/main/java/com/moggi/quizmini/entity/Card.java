@@ -72,5 +72,9 @@ public class Card implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime modifyTime;
 
+    /**
+     * 最近一次学习时间
+     */
+    private LocalDate lastReviewTime;
 
 }

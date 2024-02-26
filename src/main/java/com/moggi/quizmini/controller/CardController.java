@@ -75,5 +75,9 @@ public class CardController {
         Boolean flag = service.submit(cardDTOList);
     }
 
-
+    @PostMapping("searchList")
+    @ResponseBody
+    public List<CardDTO> searchList(@RequestBody CardQueryDTO query) {
+        return service.searchList(query);
+    }
 }
