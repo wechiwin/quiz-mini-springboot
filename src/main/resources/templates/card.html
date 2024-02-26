@@ -26,8 +26,8 @@
 
 
         <div class="list-item" v-for="(question, index) in cardList">
-            <!--            <div v-show="(index+1)==currentQuestionIndex">-->
-            <div>
+            <div v-show="(index+1)==currentQuestionIndex">
+                <!--            <div>-->
                 <h2>
                     {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
                 </h2>
@@ -41,37 +41,6 @@
                 </div>
             </div>
         </div>
-
-
-        <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"-->
-        <!--                 id="firstQuestion">-->
-        <!--                <h2>-->
-        <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
-        <!--                        th:text="${card.grammaticalPerson}"></span>-->
-        <!--                </h2>-->
-
-        <!--                <div class="inputArea">-->
-        <!--                    <label>-->
-        <!--                        <input type="text" spellcheck="false" id="firstInputText">-->
-        <!--                    </label>-->
-        <!--                    <button th:onclick="handleControlAnswer(0)">Controlla</button>-->
-        <!--                </div>-->
-        <!--            </div>-->
-
-        <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:id="questions">-->
-        <!--                <h2>-->
-        <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
-        <!--                        th:text="${card.grammaticalPerson}"></span>-->
-        <!--                </h2>-->
-        <!--                <div class="inputArea">-->
-        <!--                    <label>-->
-        <!--                        <input type="text" spellcheck="false" id="inputText">-->
-        <!--                    </label>-->
-        <!--                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">-->
-        <!--                        Controlla-->
-        <!--                    </button>-->
-        <!--                </div>-->
-        <!--            </div>-->
 
 
         <div>
@@ -149,6 +118,7 @@
                     // Now 'foPkid' contains the value "-1621147646"
                     console.log('foPkid:', foPkid);
                     this.foPkid = foPkid
+                    this.getQuestions(foPkid)
 
                 } else {
                     console.log('Parameter not found');
@@ -169,12 +139,14 @@
                     data: JSON.stringify(param),
                     dataType: "json",
                     contentType: "application/json",
-                    success: function (result) {
-                        if (result.status == 200) {
-                            console.log(result)
+                    success: (result) => {
+                        if (result.status === 200) {
                             this.cardList = result.data;
                             console.log('cardList', this.cardList)
                         }
+                    },
+                    error: (error) => {
+                        console.error('Error fetching questions:', error);
                     }
                 });
 
