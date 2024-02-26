@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Title</title>
-    <script src="/common/common-js.js" type="application/javascript"></script>
-    <script src="/js/axios.min.js" type="application/javascript"></script>
-    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>
+    <title>Studiamo l'italiano</title>
+    <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--    <script src="/js/axios.min.js" type="application/javascript"></script>-->
+    <!--    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
 
 </head>
 <body>
@@ -22,51 +24,55 @@
             </h2>
         </div>
 
-        <div>
-            <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"-->
-            <!--                 id="firstQuestion">-->
-            <!--                <h2>-->
-            <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
-            <!--                        th:text="${card.grammaticalPerson}"></span>-->
-            <!--                </h2>-->
 
-            <!--                <div class="inputArea">-->
-            <!--                    <label>-->
-            <!--                        <input type="text" spellcheck="false" id="firstInputText">-->
-            <!--                    </label>-->
-            <!--                    <button th:onclick="handleControlAnswer(0)">Controlla</button>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
-            <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:id="questions">-->
-            <!--                <h2>-->
-            <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
-            <!--                        th:text="${card.grammaticalPerson}"></span>-->
-            <!--                </h2>-->
-            <!--                <div class="inputArea">-->
-            <!--                    <label>-->
-            <!--                        <input type="text" spellcheck="false" id="inputText">-->
-            <!--                    </label>-->
-            <!--                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">-->
-            <!--                        Controlla-->
-            <!--                    </button>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
-            <!--            <div class="list-item" v-for="(question,index) in cardList">-->
-            <!--                <h2>-->
-            <!--                    {index+1}. {question.verb} &#45;&#45; {question.grammaticalPerson}-->
-            <!--                </h2>-->
-            <!--            </div>-->
-
-            <!--            <div class="list-item" v-for="(question, index) in cardList">-->
-            <!--                <h2>-->
-            <!--                    {{ index+1 }}. {{ question.verb }} &#45;&#45; {{ question.grammaticalPerson }}-->
-            <!--                </h2>-->
-            <!--            </div>-->
-
-
+        <div class="list-item" v-for="(question, index) in cardList">
+            <!--            <div v-show="(index+1)==currentQuestionIndex">-->
+            <div>
+                <h2>
+                    {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
+                </h2>
+                <div class="inputArea">
+                    <label>
+                        <input type="text" spellcheck="false" id="inputText" v-model="userAnswer">
+                    </label>
+                    <button>
+                        Controlla
+                    </button>
+                </div>
+            </div>
         </div>
+
+
+        <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"-->
+        <!--                 id="firstQuestion">-->
+        <!--                <h2>-->
+        <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
+        <!--                        th:text="${card.grammaticalPerson}"></span>-->
+        <!--                </h2>-->
+
+        <!--                <div class="inputArea">-->
+        <!--                    <label>-->
+        <!--                        <input type="text" spellcheck="false" id="firstInputText">-->
+        <!--                    </label>-->
+        <!--                    <button th:onclick="handleControlAnswer(0)">Controlla</button>-->
+        <!--                </div>-->
+        <!--            </div>-->
+
+        <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:id="questions">-->
+        <!--                <h2>-->
+        <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
+        <!--                        th:text="${card.grammaticalPerson}"></span>-->
+        <!--                </h2>-->
+        <!--                <div class="inputArea">-->
+        <!--                    <label>-->
+        <!--                        <input type="text" spellcheck="false" id="inputText">-->
+        <!--                    </label>-->
+        <!--                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">-->
+        <!--                        Controlla-->
+        <!--                    </button>-->
+        <!--                </div>-->
+        <!--            </div>-->
+
 
         <div>
             <!-- 在 th:attr 中设置动态内容 -->
@@ -75,16 +81,17 @@
             <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>
             <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>
             <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>
+
         </div>
 
         <hr/>
 
-        <div th:each="card : ${cardList}">
-            <p>Numero: <span th:text="${cardStat.count}">index</span> / total </p>
-            <p class="score">Punti: </p>
+        <div>
+            <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
+            <p class="score">Punti: {{score}} </p>
             <div>
-                <button th:onclick="handleControlAnswer()">←</button>
-                <button th:onclick="handleControlAnswer()">→</button>
+                <button @click="handlePrevNext('prev')">←</button>
+                <button @click="handlePrevNext('next')">→</button>
             </div>
         </div>
 
@@ -94,19 +101,86 @@
 
 </div>
 
-<script>
+<script type="text/javascript">
     new Vue({
         el: '#app',
-        data: {
-            isCorrect: false,
-            currentIndex: 0,
-            cardList: [],
+        data() {
+            return {
+                isCorrect: false,
+                score: 0,
+                currentQuestionIndex: 1,
+                cardList: [],
+                // cardList: data - cardList,
+                total: 0,
+                isCompleted: false,
+                userAnswer: '',
+                userAnswerList: [],
+            }
         },
         mounted() {
-
-
+            this.getPkid()
         },
-        methods: {}
+        methods: {
+            handlePrevNext(flag) {
+                if (flag === 'prev') {
+                    this.currentQuestionIndex -= 1
+                } else {
+                    this.currentQuestionIndex += 1
+                }
+                if (this.currentQuestionIndex < 0) {
+                    this.currentQuestionIndex = 1
+                } else if (this.currentQuestionIndex === this.total) {
+                    this.currentQuestionIndex = this.total
+                    this.isCompleted = true
+                }
+
+            },
+            getPkid() {
+                // Get the current URL
+                var currentUrl = window.location.href;
+
+                var regex = /\/quiz\/card\/listByFoPkid\/(-?\d+)/;
+                var match = currentUrl.match(regex);
+
+                if (match && match.length > 1) {
+                    // Extracted parameter value
+                    var foPkid = match[1];
+
+                    // Now 'foPkid' contains the value "-1621147646"
+                    console.log('foPkid:', foPkid);
+                    this.foPkid = foPkid
+
+                } else {
+                    console.log('Parameter not found');
+                }
+            },
+            getQuestions(foPkid) {
+                // this.cardList = [
+                //     {id: 1, q: 'aaa'},
+                //     {id: 2, q: 'bbb'},
+                // ]
+
+                var param = {
+                    foPkid
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (result.status == 200) {
+                            console.log(result)
+                            this.cardList = result.data;
+                            console.log('cardList', this.cardList)
+                        }
+                    }
+                });
+
+
+            }
+        }
     })
 </script>
 
