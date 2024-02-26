@@ -8,16 +8,16 @@ import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.dto.CardQueryDTO;
 import com.moggi.quizmini.entity.Card;
+import com.moggi.quizmini.entity.Folder;
 import com.moggi.quizmini.excel.ExcelExportHandler;
 import com.moggi.quizmini.excel.ExcelReadListener;
 import com.moggi.quizmini.service.CardService;
 import com.moggi.quizmini.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
  * @author wechiwin
  * @since 2024-02-07
  */
-@RestController
+@Controller
 @RequestMapping("/card")
 public class CardController {
     @Autowired
@@ -59,26 +59,21 @@ public class CardController {
         excelExportHandler.downloadTemplate(response, "template", Card.class);
     }
 
-    // @PostMapping("listByFoPkid")
-    // public ModelAndView listByFoPkid(@RequestParam(value = "foPkid") String foPkid, Model model) {
-    //     ModelAndView mav = new ModelAndView("card");
-    //     List<Card> list = service.listByFoPkid(foPkid);
-    //     Folder folder = folderService.getById(foPkid);
-    //     mav.addObject("folder", folder);
-    //     mav.addObject("cardList", list);
-    //     return mav;
-    // }
-
-    @PostMapping("searchList")
-    public List<CardDTO> searchList(CardQueryDTO query) {
-        List<CardDTO> list = service.searchList(query);
+    @GetMapping("/listByFoPkid/{foPkid}")
+    public ModelAndView listByFoPkid(@PathVariable(value = "foPkid") Integer foPkid) {
+        ModelAndView mav = new ModelAndView("card");
+        List<CardDTO> list = service.searchList(new CardQueryDTO().setFoPkid(foPkid));
         // List<Card> list = service.listByFoPkid(foPkid);
-        // Folder folder = folderService.getById(foPkid);
-        return list;
+        Folder folder = folderService.getById(foPkid);
+        mav.addObject("folder", folder);
+        mav.addObject("cardList", list);
+        return mav;
     }
 
     @PostMapping("submit")
     public void submit(List<CardDTO> cardDTOList) {
         Boolean flag = service.submit(cardDTOList);
     }
+
+
 }

@@ -3,6 +3,7 @@ package com.moggi.quizmini.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class CardQueryDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
