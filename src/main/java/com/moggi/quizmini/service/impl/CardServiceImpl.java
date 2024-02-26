@@ -6,6 +6,7 @@ import com.moggi.quizmini.constant.ForgettingCurveEnum;
 import com.moggi.quizmini.constant.YesOrNoEnum;
 import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
+import com.moggi.quizmini.dto.CardQueryDTO;
 import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.entity.Folder;
 import com.moggi.quizmini.framework.pojo.Converter;
@@ -107,18 +108,22 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     public List<Card> listByFoPkid(String foPkid) {
         LambdaQueryWrapper<Card> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Card::getFoPkid, foPkid);
+        wrapper.orderByAsc(Card::getReviewTime);
         List<Card> list = mapper.selectList(wrapper);
         return list;
     }
 
     @Override
     @Transactional
-    public Boolean completeBatch(List<CardDTO> cardDTOList) {
+    public Boolean submit(List<CardDTO> cardDTOList) {
+        // List<CardDTO> wrongList = new ArrayList<>();
         for (CardDTO cardDTO : cardDTOList) {
             // 答错
             if (cardDTO.getIfCorrect().equals(YesOrNoEnum.No.getVal())) {
                 cardDTO.setHitTimes(0);
                 cardDTO.setReviewTime(LocalDate.now().plusDays(1));
+                // 加入错题集
+                // wrongList.add(cardDTO);
             } else { // 答对
                 cardDTO.setHitTimes(cardDTO.getHitTimes() + 1);
                 int days = ForgettingCurveEnum.getDaysByHitTimes(cardDTO.getHitTimes());
@@ -132,5 +137,16 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         List<Card> cardList = cardConverter.toEntityList(cardDTOList);
         int i = mapper.updateBatch(cardList);
         return true;
+    }
+
+    @Override
+    public List<CardDTO> searchList(CardQueryDTO query) {
+        LambdaQueryWrapper<Card> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Card::getFoPkid, query.getFoPkid());
+        wrapper.orderByAsc(Card::getReviewTime);
+        wrapper.last("limit 10");
+        List<Card> list = mapper.selectList(wrapper);
+        List<CardDTO> cardDTOS = cardConverter.toDtoList(list);
+        return cardDTOS;
     }
 }
