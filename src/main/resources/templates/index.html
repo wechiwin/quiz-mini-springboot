@@ -19,19 +19,14 @@
     <div id="folderList" class="list-content">
         <div v-for="folder in list" :key="folder.foPkid">
             <!--            <a class="list-item" :href="`/quiz/card/listByFoPkid/foPkid=${folder.foPkid}`">{{folder.foName}}</a>-->
-            <a class="list-item" href="javascript:;" @click="navigateAndPost(folder.foPkid)">{{folder.foName}}</a>
+            <!--            <a class="list-item" href="javascript:;" @click="navigateAndPost(folder.foPkid)">{{folder.foName}}</a>-->
+            <a class="list-item" :href="['/quiz/card/listByFoPkid/'+folder.foPkid]">{{folder.foName}} </a>
         </div>
     </div>
+
+
 </div>
 
-<div class="list-content">
-    <div class="" th:each="folder : ${foList}">
-        <a class="list-item"
-           th:text="${folder.foName}"
-           th:href="@{/card/listByFoPkid(foPkid=${folder.foPkid})}"
-        >测试</a>
-    </div>
-</div>
 </div>
 
 <script type="text/javascript">
