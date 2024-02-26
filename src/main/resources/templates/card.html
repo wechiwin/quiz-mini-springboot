@@ -103,18 +103,8 @@
             cardList: [],
         },
         mounted() {
-            // 在 mounted 钩子中获取后端数据
-            this.cardList = JSON.parse(document.getElementById('app').getAttribute('data-cardList'));
-            console.log(this.cardList)
 
-            const rawData = document.getElementById('app').getAttribute('data-cardList');
-            console.log('Raw data from attribute:', rawData);
 
-            try {
-                this.cardList = JSON.parse(rawData) || [];
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-            }
         },
         methods: {}
     })
