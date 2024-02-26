@@ -4,9 +4,9 @@ package com.moggi.quizmini.controller;
 import com.moggi.quizmini.entity.Folder;
 import com.moggi.quizmini.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -18,14 +18,15 @@ import java.util.List;
  * @author wechiwin
  * @since 2024-02-07
  */
-@Controller
+@RestController
+@RequestMapping("/folder")
 public class FolderController {
 
     @Autowired
     private FolderService folderService;
 
-    @RequestMapping("/")
-    public String home(Model model) {
+    @PostMapping("searchList")
+    public List<Folder> searchList() {
         List<Folder> folderList = folderService.list();
         // List<Folder> folderList = new ArrayList<>();
         // for (int i = 0; i < 20; i++) {
@@ -34,21 +35,15 @@ public class FolderController {
         //     folderList.add(folder);
         // }
 
-        model.addAttribute("folderList", folderList);
-        return "index";
+        // model.addAttribute("folderList", folderList);
+        // return "index";
+        return folderList;
     }
 
-    @RequestMapping("/folder/add")
-    public String add(String folderName) {
-        folderService.add(folderName);
-        return "redirect:/folder/list"; // 重定向到list接口
-    }
-
-    @RequestMapping("/folder/list")
-    public String list(Model model, List<Folder> list) {
-        List<Folder> folderList = folderService.list();
-        model.addAttribute("folderList", folderList);
-        return "Quiz.js"; // 返回xx页面
-    }
+    // @PostMapping("add")
+    // public String add(String folderName) {
+    //     folderService.add(folderName);
+    //     return "redirect:/folder/list"; // 重定向到list接口
+    // }
 
 }
