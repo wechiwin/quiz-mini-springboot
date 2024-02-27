@@ -36,23 +36,20 @@
                     <div class="inputArea">
                         <label>
                             <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
-                                   v-model="userAnswer"
-                                   @keyup.enter="handleCheckAnswer"
+                                   v-model="question.userAnswer"
+                                   @keyup.enter="handleCheckAnswer(question)"
                                    :ref="`inputRef${index+1}`">
-
                         </label>
-                        <button @click="handleCheckAnswer" :disabled="isDone">
+                        <button @click="handleCheckAnswer" :disabled="question.questionDone">
                             Controlla
                         </button>
                     </div>
 
-                    <div v-if="isDone">
-                        <p>{{ isCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+                    <div v-show="showCorrectAnswer">
+                        <p>{{ question.ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
                         <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
                         <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
                     </div>
-
-
                 </div>
             </div>
 
@@ -96,8 +93,8 @@
         el: '#app',
         data() {
             return {
-                isCorrect: false,
-                isDone: false,
+                ifCorrect: false,
+                questionDone: false,
                 showCorrectAnswer: false,
                 score: 0,
                 currentQuestionIndex: 1,
@@ -111,31 +108,41 @@
         },
         mounted() {
             this.getPkid()
+            // TODO 进来自动获取焦点
+            this.$nextTick(() => {
+                const inputRef = this.$refs["inputRef1"][0];
+                if (inputRef) {
+                    inputRef.focus();
+                }
+            });
+
         },
         methods: {
-            handleCheckAnswer() {
+            handleCheckAnswer(question) {
+                // if(question.questionDone) return
                 if (this.showCorrectAnswer === false) {
                     console.log('this.userAnswer', this.userAnswer)
                     if (this.userAnswer.trim().toLowerCase() === this.cardList[this.currentQuestionIndex - 1].conjugation) {
-                        this.isCorrect = true
+                        this.ifCorrect = true
                         this.score += 1
                     } else {
-                        this.isCorrect = false
+                        this.ifCorrect = false
                     }
-                    this.isDone = true
+                    this.questionDone = true
                     this.showCorrectAnswer = true
+                    // this.cardList[this.currentQuestionIndex-1].userAnswer=this.userAnswer
+                    this.cardList[this.currentQuestionIndex - 1].ifCorrect = this.ifCorrect
+                    this.cardList[this.currentQuestionIndex - 1].questionDone = this.questionDone
                 } else {
                     this.handlePrevNext('next')
                 }
-
             },
             handlePrevNext(flag) {
-                // 先存答案
 
-
-                this.userAnswer = ''
-                this.isDone = false
-                this.isCorrect = false
+                // 没有做过
+                // this.userAnswer = ''
+                // this.questionDone = false
+                // this.ifCorrect = false
                 this.showCorrectAnswer = false
 
 
@@ -145,6 +152,14 @@
                     } else {
                         this.currentQuestionIndex -= 1
                     }
+
+
+                    this.$nextTick(() => {
+                        const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                        if (inputRef) {
+                            inputRef.focus();
+                        }
+                    });
                 } else {
                     // 下一题
                     if (this.currentQuestionIndex === this.total) {
@@ -163,6 +178,16 @@
                         });
                     }
                 }
+
+                if (this.cardList[currentQuestionIndex - 1].questionDone) {
+                    this.showCorrectAnswer = true
+                } else {
+                    this.showCorrectAnswer = false
+                    this.userAnswer = ''
+                    this.questionDone = false
+                    this.ifCorrect = false
+                }
+
             },
             getPkid() {
                 // Get the current URL
