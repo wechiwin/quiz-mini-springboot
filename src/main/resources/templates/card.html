@@ -7,8 +7,10 @@
     <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
     <!--    <script src="/js/axios.min.js" type="application/javascript"></script>-->
     <!--    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
-    <script type="text/javascript" src="static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--    <script type="text/javascript" src="static/js/jquery.min.js"></script>-->
+    <!--    <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>-->
 
 </head>
 <body>
@@ -24,44 +26,63 @@
             </h2>
         </div>
 
+        <div v-if="!isCompleted">
+            <div class="list-item" v-for="(question, index) in cardList">
+                <div v-show="(index+1)==currentQuestionIndex">
+                    <!--            <div>-->
+                    <h2>
+                        {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
+                    </h2>
+                    <div class="inputArea">
+                        <label>
+                            <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
+                                   v-model="userAnswer"
+                                   @keyup.enter="handleCheckAnswer"
+                                   :ref="`inputRef${index+1}`">
 
-        <div class="list-item" v-for="(question, index) in cardList">
-            <div v-show="(index+1)==currentQuestionIndex">
-                <!--            <div>-->
-                <h2>
-                    {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
-                </h2>
-                <div class="inputArea">
-                    <label>
-                        <input type="text" spellcheck="false" id="inputText" v-model="userAnswer">
-                    </label>
-                    <button>
-                        Controlla
-                    </button>
+                        </label>
+                        <button @click="handleCheckAnswer" :disabled="isDone">
+                            Controlla
+                        </button>
+                    </div>
+
+                    <div v-if="isDone">
+                        <p>{{ isCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+                        <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
+                        <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
+                    </div>
+
+
                 </div>
             </div>
-        </div>
 
 
-        <div>
-            <!-- 在 th:attr 中设置动态内容 -->
-            <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>
-            <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>
-            <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>
-            <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>
-            <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>
-
-        </div>
-
-        <hr/>
-
-        <div>
-            <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
-            <p class="score">Punti: {{score}} </p>
             <div>
-                <button @click="handlePrevNext('prev')">←</button>
-                <button @click="handlePrevNext('next')">→</button>
+                <!-- 在 th:attr 中设置动态内容 -->
+                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>
+                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>
+                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>
+                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>
+                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>
+
             </div>
+
+            <hr/>
+
+            <div>
+                <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
+                <p class="score">Punti: {{score}} 🎁 </p>
+                <div>
+                    <button @click="handlePrevNext('prev')">←</button>
+                    <button @click="handlePrevNext('next')">→</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div v-else>
+            1111111111111
+
         </div>
 
 
@@ -76,6 +97,8 @@
         data() {
             return {
                 isCorrect: false,
+                isDone: false,
+                showCorrectAnswer: false,
                 score: 0,
                 currentQuestionIndex: 1,
                 cardList: [],
@@ -90,9 +113,34 @@
             this.getPkid()
         },
         methods: {
+            handleCheckAnswer() {
+                if (this.showCorrectAnswer === false) {
+                    console.log('this.userAnswer', this.userAnswer)
+                    if (this.userAnswer.trim().toLowerCase() === this.cardList[this.currentQuestionIndex - 1].conjugation) {
+                        this.isCorrect = true
+                        this.score += 1
+                    } else {
+                        this.isCorrect = false
+                    }
+                    this.isDone = true
+                    this.showCorrectAnswer = true
+                } else {
+                    this.handlePrevNext('next')
+                }
+
+            },
             handlePrevNext(flag) {
+                // 先存答案
+
+
+                this.userAnswer = ''
+                this.isDone = false
+                this.isCorrect = false
+                this.showCorrectAnswer = false
+
+
                 if (flag === 'prev') {
-                    if (this.currentQuestionIndex === 0) {
+                    if (this.currentQuestionIndex === 1) {
                         this.currentQuestionIndex = 1
                     } else {
                         this.currentQuestionIndex -= 1
@@ -102,8 +150,17 @@
                     if (this.currentQuestionIndex === this.total) {
                         this.currentQuestionIndex = this.total
                         this.isCompleted = true
+                        //     提交答案
+                        alert('submit!')
                     } else {
                         this.currentQuestionIndex += 1
+
+                        this.$nextTick(() => {
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            if (inputRef) {
+                                inputRef.focus();
+                            }
+                        });
                     }
                 }
             },
@@ -162,16 +219,6 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    function handleControlAnswer(index, count) {
-        if (index == 0) {
-            console.log('ok')
-            var firstQuestionDiv = document.getElementById('firstQuestion');
-            firstQuestionDiv.classList.add('hideQuestion');
-            document.getElementById('question2').classList.remove('hideQuestion')
-        }
-        console.log(count)
-    }
-
     function handlePaste(button) {
         // 获取按钮上的动态内容
         var dynamicContent = button.getAttribute('data-content');
@@ -261,6 +308,13 @@
         color: #66757f;
         margin-top: 10px;
     }
+
+
+    .giusta {
+        color: coral;
+        font-weight: bold;
+    }
+
 
     button {
         padding: 10px 20px;
