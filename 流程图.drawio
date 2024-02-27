@@ -1,0 +1,59 @@
+<mxfile host="Electron" modified="2024-02-26T08:03:24.252Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="tZnENpuSe4ykxn3-0qm4" version="22.0.3" type="device">
+  <diagram name="第 1 页" id="1goCTUkQ9slhPH8tMxU5">
+    <mxGraphModel dx="2048" dy="823" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="FJyOjgpunM_lzgJwACL2-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="FJyOjgpunM_lzgJwACL2-1" target="FJyOjgpunM_lzgJwACL2-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZRVB5VBIsXJibKS701wf-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FJyOjgpunM_lzgJwACL2-1" target="ZRVB5VBIsXJibKS701wf-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-1" value="index页面选择分类" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="FJyOjgpunM_lzgJwACL2-2" target="FJyOjgpunM_lzgJwACL2-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-2" value="根据foPkid，进入card页面学习" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="300" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="FJyOjgpunM_lzgJwACL2-4" target="FJyOjgpunM_lzgJwACL2-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560" y="280" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="560" y="340" />
+              <mxPoint x="360" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-8" value="再学一组" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="FJyOjgpunM_lzgJwACL2-7" vertex="1" connectable="0">
+          <mxGeometry x="-0.0028" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="FJyOjgpunM_lzgJwACL2-4" target="FJyOjgpunM_lzgJwACL2-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560" y="500" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="560" y="440" />
+              <mxPoint x="160" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-11" value="回到首页" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="FJyOjgpunM_lzgJwACL2-10" vertex="1" connectable="0">
+          <mxGeometry x="-0.0015" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FJyOjgpunM_lzgJwACL2-4" value="进入submit页面，提交用户做题的数据" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="500" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ZRVB5VBIsXJibKS701wf-3" value="管理页面，修改folder，修改card，上传card" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
