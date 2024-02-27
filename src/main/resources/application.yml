@@ -15,7 +15,8 @@ spring:
     encoding: UTF-8
     cache: false
     mode: HTML
-
+  mvc:
+    static-path-pattern: /static/**
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   configuration:
