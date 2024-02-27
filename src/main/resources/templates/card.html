@@ -96,7 +96,7 @@
                 } else {
                     this.currentQuestionIndex += 1
                 }
-                if (this.currentQuestionIndex < 0) {
+                if (this.currentQuestionIndex === 0) {
                     this.currentQuestionIndex = 1
                 } else if (this.currentQuestionIndex === this.total) {
                     this.currentQuestionIndex = this.total
@@ -142,6 +142,7 @@
                     success: (result) => {
                         if (result.status === 200) {
                             this.cardList = result.data;
+                            this.total = result.data.length
                             console.log('cardList', this.cardList)
                         }
                     },
