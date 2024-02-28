@@ -38,7 +38,8 @@
                             <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
                                    v-model="question.userAnswer"
                                    @keyup.enter="handleCheckAnswer(question)"
-                                   :ref="`inputRef${index+1}`">
+                                   :ref="`inputRef${index+1}`"
+                            >
                         </label>
                         <button @click="handleCheckAnswer" :disabled="question.questionDone">
                             Controlla
@@ -56,11 +57,17 @@
 
             <div>
                 <!-- 在 th:attr 中设置动态内容 -->
-                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>
-                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>
-                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>
-                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>
-                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>
+                <!--                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>-->
+                <!--                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>-->
+                <!--                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>-->
+                <!--                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>-->
+                <!--                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>-->
+
+                <button v-for="button in buttons" :key="button.content" @click="handlePasteButtons(button.content)"
+                        class="copyButton">
+                    {{ button.content }}
+                </button>
+
 
             </div>
 
@@ -78,13 +85,18 @@
         </div>
 
         <div v-else>
-            done!
+            <!--            <div class="countdown">Torna a HOME...</div>-->
+            <h2 style="color:coral"> Tutte finite! 👍😊👍 Punti totali: {{score}} / {{currentQuestionIndex}} 🎁</h2>
+            <div>
+                <button v-if="stillWrong" @click="handleDoAgain">
+                    Domande Sbagliate😥
+                </button>
+                <button @click="handleToHome">
+                    👉HomePage
+                </button>
+            </div>
         </div>
-
-
     </div>
-
-
 </div>
 
 <script type="text/javascript">
@@ -103,20 +115,65 @@
                 isCompleted: false,
                 userAnswer: '',
                 userAnswerList: [],
+                wrongQuestions: false,
+                buttons: [
+                    {content: 'è'},
+                    {content: 'ò'},
+                    {content: 'à'},
+                    {content: 'ì'},
+                    {content: 'ù'}
+                ],
+                stillWrong: true,
             }
         },
         mounted() {
-            this.getPkid()
+            if (!this.wrongQuestions) {
+                this.getPkid()
+            }
             // TODO 进来自动获取焦点
-            this.$nextTick(() => {
-                const inputRef = this.$refs["inputRef1"][0];
-                if (inputRef) {
-                    inputRef.focus();
-                }
-            });
+            // this.$nextTick(() => {
+            //     const inputRef = this.$refs["inputRef1"][0];
+            //     if (inputRef) {
+            //         inputRef.focus();
+            //     }
+            // });
 
         },
         methods: {
+            handlePasteButtons(content) {
+                navigator.clipboard.writeText(content)
+                    .then(() => {
+                        // Update input with copied content
+                        this.$nextTick(() => {
+                            this.cardList[this.currentQuestionIndex - 1].userAnswer += content;
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            if (inputRef) {
+                                inputRef.focus();
+                            }
+                        });
+
+                    })
+                    .catch(err => {
+                        console.error('Unable to copy', err);
+                        // Handle error if necessary
+                    });
+            },
+
+
+            handleDoAgain() {
+                this.wrongQuestions = true
+                this.isCompleted = false
+                this.userAnswer = ''
+                this.currentQuestionIndex = 1
+                this.showCorrectAnswer = false
+                this.isCompleted = false
+                this.total = this.cardList.length
+                this.score = 0
+            },
+
+            handleToHome() {
+                window.location.href = "/quiz";
+            },
             handleCheckAnswer(question) {
                 // 判断答案
                 if (!this.showCorrectAnswer) {
@@ -167,7 +224,11 @@
                     contentType: "application/json",
                     success: (result) => {
                         if (result.status === 200) {
-                            console.log(result)
+                            this.cardList = result.data
+                            console.log('错题', this.cardList)
+                            if (result.data.length === 0) {
+                                this.stillWrong = false
+                            }
                         }
                     },
                     error: (error) => {
@@ -302,7 +363,7 @@
         document.body.removeChild(tempTextarea);
 
         // 将复制的内容粘贴到input框中
-        document.getElementById('inputText').value += dynamicContent;
+        document.getElementById('inputRef' + this.currentQuestionIndex).value += dynamicContent;
 
         // 这里可以添加其他处理逻辑，例如提示用户复制成功
         // alert('Copied: ' + dynamicContent);
@@ -366,6 +427,33 @@
         margin-inline-end: 0px;
         font-weight: bold;
     }
+
+    @keyframes countdown {
+        0% {
+            /*transform: scale(1);*/
+            opacity: 1;
+        }
+        33% {
+            /*transform: scale(0.8);*/
+            opacity: 0.8;
+        }
+        66% {
+            /*transform: scale(0.6);*/
+            opacity: 0.6;
+        }
+        100% {
+            /*transform: scale(0);*/
+            opacity: 0;
+        }
+    }
+
+    .countdown {
+        display: inline-block;
+        font-size: 4em;
+        color: coral;
+        animation: countdown 3s linear forwards;
+    }
+
 
     p {
         color: #66757f;
