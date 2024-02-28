@@ -92,7 +92,7 @@
         el: '#app',
         data() {
             return {
-                ifCorrect: false,
+                ifCorrect: 0,
                 questionDone: false,
                 showCorrectAnswer: false,
                 score: 0,
@@ -123,13 +123,13 @@
                     let userAnswer = this.cardList[this.currentQuestionIndex - 1].userAnswer
                     if (userAnswer) {
                         if (userAnswer.trim().toLowerCase() === this.cardList[this.currentQuestionIndex - 1].conjugation) {
-                            this.ifCorrect = true
+                            this.ifCorrect = 1
                             this.score += 1
                         } else {
-                            this.ifCorrect = false
+                            this.ifCorrect = 0
                         }
                     } else {
-                        this.ifCorrect = false
+                        this.ifCorrect = 0
                     }
 
                     this.questionDone = true
@@ -223,7 +223,7 @@
                     this.showCorrectAnswer = false
                     this.userAnswer = ''
                     this.questionDone = false
-                    this.ifCorrect = false
+                    this.ifCorrect = 0
                 }
 
             },

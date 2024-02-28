@@ -116,6 +116,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     @Override
     @Transactional
     public Boolean submit(List<CardDTO> cardDTOList) {
+        if (CollectionUtils.isEmpty(cardDTOList)) return false;
         // List<CardDTO> wrongList = new ArrayList<>();
         for (CardDTO cardDTO : cardDTOList) {
             // 答错
@@ -136,8 +137,14 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
             cardDTO.setLastReviewTime(LocalDate.now());
         }
         List<Card> cardList = cardConverter.toEntityList(cardDTOList);
-        int i = mapper.updateBatch(cardList);
+        for (Card card : cardList) {
+            int i = mapper.updateById(card);
+        }
+        // todo 待解决sqlite批量更新的问题
+        // int i = mapper.updateBatch(cardList);
         return true;
+
+
     }
 
     @Override
