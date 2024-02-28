@@ -55,23 +55,22 @@
             </div>
 
 
-            <div>
-                <!-- 在 th:attr 中设置动态内容 -->
-                <!--                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>-->
-                <!--                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>-->
-                <!--                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>-->
-                <!--                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>-->
-                <!--                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>-->
+            <!--            <div>-->
+            <!--                &lt;!&ndash; 在 th:attr 中设置动态内容 &ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>&ndash;&gt;-->
 
-                <button v-for="button in buttons" :key="button.content" @click="handlePasteButtons(button.content)"
-                        class="copyButton">
-                    {{ button.content }}
-                </button>
+            <!--                <button v-for="button in buttons" :key="button.content" @click="handlePasteButtons(button.content)"-->
+            <!--                        class="copyButton">-->
+            <!--                    {{ button.content }}-->
+            <!--                </button>-->
 
+            <!--            </div>-->
 
-            </div>
-
-            <hr/>
+            <!--            <hr/>-->
 
             <div>
                 <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
