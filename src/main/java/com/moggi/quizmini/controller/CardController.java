@@ -69,8 +69,8 @@ public class CardController {
 
     @PostMapping("submit")
     @ResponseBody
-    public void submit(@RequestBody List<CardDTO> cardList) {
-        Boolean flag = service.submit(cardList);
+    public List<CardDTO> submit(@RequestBody List<CardDTO> cardList) {
+        return service.submit(cardList);
     }
 
     @PostMapping("searchList")
