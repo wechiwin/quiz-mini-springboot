@@ -46,7 +46,7 @@
                     </div>
 
                     <div v-show="showCorrectAnswer">
-                        <p>{{ question.ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+                        <p>{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
                         <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
                         <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
                     </div>
@@ -69,17 +69,16 @@
             <div>
                 <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
                 <p class="score">Punti: {{score}} 🎁 </p>
-                <div>
-                    <button @click="handlePrevNext('prev')">←</button>
-                    <button @click="handlePrevNext('next')">→</button>
-                </div>
+                <!--                <div>-->
+                <!--                    <button @click="handlePrevNext('prev')">←</button>-->
+                <!--                    <button @click="handlePrevNext('next')">→</button>-->
+                <!--                </div>-->
             </div>
 
         </div>
 
         <div v-else>
-            1111111111111
-
+            done!
         </div>
 
 
@@ -119,26 +118,65 @@
         },
         methods: {
             handleCheckAnswer(question) {
-                // if(question.questionDone) return
-                if (this.showCorrectAnswer === false) {
-                    console.log('this.userAnswer', this.userAnswer)
-                    if (this.userAnswer.trim().toLowerCase() === this.cardList[this.currentQuestionIndex - 1].conjugation) {
-                        this.ifCorrect = true
-                        this.score += 1
+                // 判断答案
+                if (!this.showCorrectAnswer) {
+                    let userAnswer = this.cardList[this.currentQuestionIndex - 1].userAnswer
+                    if (userAnswer) {
+                        if (userAnswer.trim().toLowerCase() === this.cardList[this.currentQuestionIndex - 1].conjugation) {
+                            this.ifCorrect = true
+                            this.score += 1
+                        } else {
+                            this.ifCorrect = false
+                        }
                     } else {
                         this.ifCorrect = false
                     }
+
                     this.questionDone = true
                     this.showCorrectAnswer = true
-                    // this.cardList[this.currentQuestionIndex-1].userAnswer=this.userAnswer
                     this.cardList[this.currentQuestionIndex - 1].ifCorrect = this.ifCorrect
                     this.cardList[this.currentQuestionIndex - 1].questionDone = this.questionDone
                 } else {
-                    this.handlePrevNext('next')
+                    // 进行翻页
+                    if (this.currentQuestionIndex === this.total) {
+                        this.currentQuestionIndex = this.total
+                        this.isCompleted = true
+                        //     提交答案
+                        this.submit()
+                    } else {
+                        this.currentQuestionIndex += 1
+                        this.showCorrectAnswer = false
+                        this.questionDone = false
+
+                        this.$nextTick(() => {
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            if (inputRef) {
+                                inputRef.focus();
+                            }
+                        });
+                    }
                 }
             },
-            handlePrevNext(flag) {
 
+            submit() {
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/submit",
+                    data: JSON.stringify(this.cardList),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            console.log(result)
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Error:', error);
+                    }
+                });
+            },
+
+            handlePrevNext(flag) {
                 // 没有做过
                 // this.userAnswer = ''
                 // this.questionDone = false
