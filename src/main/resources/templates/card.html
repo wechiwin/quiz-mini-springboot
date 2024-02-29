@@ -9,8 +9,8 @@
     <!--    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
-    <!--    <script type="text/javascript" src="static/js/jquery.min.js"></script>-->
-    <!--    <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>-->
+    <!--        <script type="text/javascript" src="static/js/jquery.min.js"></script>-->
+    <!--        <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>-->
 
 </head>
 <body>
@@ -19,7 +19,7 @@
         <a th:href="@{/}" class="header-text">Studiamo!</a>
     </div>
 
-    <div>
+    <div v-if="cardList.length">
         <div>
             <h2>
                 Categoria: <span th:text="${folder.foName}">nome</span>
@@ -31,6 +31,7 @@
                 <div v-show="(index+1)==currentQuestionIndex">
                     <!--            <div>-->
                     <h2>
+                        <span v-if="!isFirstTime">🔔</span>
                         {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
                     </h2>
                     <div class="inputArea">
@@ -47,7 +48,7 @@
                     </div>
 
                     <div v-show="showCorrectAnswer">
-                        <p>{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+                        <p style="color:coral">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
                         <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
                         <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
                     </div>
@@ -74,7 +75,7 @@
 
             <div>
                 <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
-                <p class="score">Punti: {{score}} 🎁 </p>
+                <!--                <p class="score">Punti: {{score}} 🎁 </p>-->
                 <!--                <div>-->
                 <!--                    <button @click="handlePrevNext('prev')">←</button>-->
                 <!--                    <button @click="handlePrevNext('next')">→</button>-->
@@ -83,18 +84,16 @@
 
         </div>
 
-        <div v-else>
-            <!--            <div class="countdown">Torna a HOME...</div>-->
-            <h2 style="color:coral"> Tutte finite! 👍😊👍 Punti totali: {{score}} / {{currentQuestionIndex}} 🎁</h2>
-            <div>
-                <button v-if="stillWrong" @click="handleDoAgain">
-                    Domande Sbagliate😥
-                </button>
-                <button @click="handleToHome">
-                    👉HomePage
-                </button>
-            </div>
-        </div>
+    </div>
+
+    <div v-else>
+        <h2 style="color:coral"> Tutte finite! 👍😊👍 </h2>
+        <button @click="handleGetMoreQuestions">
+            Più domande! 💪
+        </button>
+        <button @click="handleToHome">
+            👉HomePage
+        </button>
     </div>
 </div>
 
@@ -113,19 +112,20 @@
                 total: 0,
                 isCompleted: false,
                 userAnswer: '',
-                userAnswerList: [],
                 wrongQuestions: false,
-                buttons: [
-                    {content: 'è'},
-                    {content: 'ò'},
-                    {content: 'à'},
-                    {content: 'ì'},
-                    {content: 'ù'}
-                ],
-                stillWrong: true,
+                foPkid: '',
+                // buttons: [
+                //     {content: 'è'},
+                //     {content: 'ò'},
+                //     {content: 'à'},
+                //     {content: 'ì'},
+                //     {content: 'ù'}
+                // ],
+                isFirstTime: true,
             }
         },
         mounted() {
+
             if (!this.wrongQuestions) {
                 this.getPkid()
             }
@@ -139,6 +139,16 @@
 
         },
         methods: {
+            handleGetMoreQuestions() {
+                this.isFirstTime = true
+                this.questionDone = true
+                this.isCompleted = false
+                this.ifCorrect = 0
+                this.showCorrectAnswer = false
+                this.currentQuestionIndex = 1
+                this.getQuestions(this.foPkid)
+
+            },
             handlePasteButtons(content) {
                 navigator.clipboard.writeText(content)
                     .then(() => {
@@ -156,18 +166,6 @@
                         console.error('Unable to copy', err);
                         // Handle error if necessary
                     });
-            },
-
-
-            handleDoAgain() {
-                this.wrongQuestions = true
-                this.isCompleted = false
-                this.userAnswer = ''
-                this.currentQuestionIndex = 1
-                this.showCorrectAnswer = false
-                this.isCompleted = false
-                this.total = this.cardList.length
-                this.score = 0
             },
 
             handleToHome() {
@@ -195,10 +193,27 @@
                 } else {
                     // 进行翻页
                     if (this.currentQuestionIndex === this.total) {
-                        this.currentQuestionIndex = this.total
-                        this.isCompleted = true
-                        //     提交答案
-                        this.submit()
+                        // 第一次提交
+                        if (this.isFirstTime) {
+                            this.currentQuestionIndex = this.total
+                            //     提交答案
+                            this.submit()
+                        } else {
+                            this.cardList = this.cardList.filter(question => question.ifCorrect === 0)
+                            console.log('第二轮错题', JSON.stringify(this.cardList))
+                            console.log('第二轮错题', this.cardList)
+                            if (this.cardList.length === 0) {
+                                this.isCompleted = true
+                            } else {
+                                this.cardList.forEach(question => {
+                                    question.userAnswer = ''
+                                    question.questionDone = false
+                                })
+                                this.currentQuestionIndex = 1
+                                this.total = this.cardList.length
+                                this.showCorrectAnswer = false
+                            }
+                        }
                     } else {
                         this.currentQuestionIndex += 1
                         this.showCorrectAnswer = false
@@ -224,10 +239,11 @@
                     success: (result) => {
                         if (result.status === 200) {
                             this.cardList = result.data
-                            console.log('错题', this.cardList)
-                            if (result.data.length === 0) {
-                                this.stillWrong = false
-                            }
+                            this.currentQuestionIndex = 1
+                            console.log('submit错题', this.cardList)
+                            this.isFirstTime = false
+                            this.showCorrectAnswer = false
+                            this.total = this.cardList.length
                         }
                     },
                     error: (error) => {
