@@ -9,8 +9,8 @@
     <!--    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
-    <!--        <script type="text/javascript" src="static/js/jquery.min.js"></script>-->
-    <!--        <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>-->
+    <!--            <script type="text/javascript" src="static/js/jquery.min.js"></script>-->
+    <!--            <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>-->
 
 </head>
 <body>
@@ -39,7 +39,7 @@
                             <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
                                    v-model="question.userAnswer"
                                    @keyup.enter="handleCheckAnswer(question)"
-                                   :ref="`inputRef${index+1}`"
+                                   :ref="`inputRefVue${currentQuestionIndex}`"
                             >
                         </label>
                         <button @click="handleCheckAnswer" :disabled="question.questionDone">
@@ -129,16 +129,33 @@
             if (!this.wrongQuestions) {
                 this.getPkid()
             }
+
             // TODO 进来自动获取焦点
-            // this.$nextTick(() => {
-            //     const inputRef = this.$refs["inputRef1"][0];
-            //     if (inputRef) {
-            //         inputRef.focus();
-            //     }
-            // });
+            this.handleFirstFocus()
 
         },
         methods: {
+            handleFirstFocus() {
+                console.log('handleFirstFocus!!!');
+                // this.$nextTick(() => {
+                //     const inputRef = document.getElementById('inputRef1')
+                //     if (inputRef) {
+                //         console.log('Focusing on inputRef1');
+                //         inputRef.focus();
+                //     } else {
+                //         console.log('InputRef1 not found');
+                //     }
+                // });
+                this.$nextTick(() => {
+                    const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`];
+                    if (inputRef) {
+                        console.log('Focusing on inputRef1');
+                        inputRef.focus();
+                    } else {
+                        console.error(`InputRef${this.currentQuestionIndex} not found`);
+                    }
+                });
+            },
             handleGetMoreQuestions() {
                 this.isFirstTime = true
                 this.questionDone = true
