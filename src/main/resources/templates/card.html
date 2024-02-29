@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Studiamo l'italiano</title>
     <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
-    <!--    <script src="/js/axios.min.js" type="application/javascript"></script>-->
-    <!--    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
-    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
+    <!--        <script src="/js/axios.min.js" type="application/javascript"></script>-->
+    <!--        <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>-->
+    <!--    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 </head>
 <body>
 <div id="app" th:attr="data-cardList=${cardList}">
@@ -36,7 +38,7 @@
                             <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
                                    v-model="question.userAnswer"
                                    @keyup.enter="handleCheckAnswer(question)"
-                                   :ref="`inputRefVue${currentQuestionIndex}`"
+                                   :ref="`inputRef${currentQuestionIndex}`"
                             >
                         </label>
                         <button @click="handleCheckAnswer" :disabled="question.questionDone">
@@ -134,22 +136,13 @@
         methods: {
             handleFirstFocus() {
                 console.log('handleFirstFocus!!!');
-                // this.$nextTick(() => {
-                //     const inputRef = document.getElementById('inputRef1')
-                //     if (inputRef) {
-                //         console.log('Focusing on inputRef1');
-                //         inputRef.focus();
-                //     } else {
-                //         console.log('InputRef1 not found');
-                //     }
-                // });
                 this.$nextTick(() => {
-                    const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`];
+                    console.log('this.$refs:', this.$refs);
+                    console.log('this.currentQuestionIndex', this.currentQuestionIndex)
+                    const inputRef = this.$refs["inputRef1"][0];
+                    console.log('handleCheckAnswer--inputRef', inputRef)
                     if (inputRef) {
-                        console.log('Focusing on inputRef1');
                         inputRef.focus();
-                    } else {
-                        console.error(`InputRef${this.currentQuestionIndex} not found`);
                     }
                 });
             },
@@ -234,7 +227,7 @@
                         this.questionDone = false
 
                         this.$nextTick(() => {
-                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][this.currentQuestionIndex - 1];
                             if (inputRef) {
                                 inputRef.focus();
                             }
