@@ -24,7 +24,7 @@ public interface CardService extends IService<Card> {
 
     boolean upload(List<CardExcelDTO> excelDTOList);
 
-    Boolean submit(List<CardDTO> cardDTOList);
+    List<CardDTO> submit(List<CardDTO> cardDTOList);
 
     List<CardDTO> searchList(CardQueryDTO query);
 

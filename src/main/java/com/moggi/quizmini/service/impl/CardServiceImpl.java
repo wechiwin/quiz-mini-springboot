@@ -115,15 +115,16 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Override
     @Transactional
-    public Boolean submit(List<CardDTO> cardDTOList) {
-        // List<CardDTO> wrongList = new ArrayList<>();
+    public List<CardDTO> submit(List<CardDTO> cardDTOList) {
+        if (CollectionUtils.isEmpty(cardDTOList)) return Collections.emptyList();
+        List<CardDTO> wrongList = new ArrayList<>();
         for (CardDTO cardDTO : cardDTOList) {
             // 答错
             if (cardDTO.getIfCorrect().equals(YesOrNoEnum.No.getVal())) {
                 cardDTO.setHitTimes(0);
                 cardDTO.setReviewTime(LocalDate.now().plusDays(1));
                 // 加入错题集
-                // wrongList.add(cardDTO);
+                wrongList.add(cardDTO);
             } else { // 答对
                 cardDTO.setHitTimes(cardDTO.getHitTimes() + 1);
                 int days = ForgettingCurveEnum.getDaysByHitTimes(cardDTO.getHitTimes());
@@ -133,17 +134,27 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
                     cardDTO.setReviewTime(LocalDate.now().plusDays(days));
                 }
             }
+            cardDTO.setLastReviewTime(LocalDate.now());
         }
         List<Card> cardList = cardConverter.toEntityList(cardDTOList);
-        int i = mapper.updateBatch(cardList);
-        return true;
+        for (Card card : cardList) {
+            int i = mapper.updateById(card);
+        }
+        // todo 待解决sqlite批量更新的问题
+        // int i = mapper.updateBatch(cardList);
+        // return true;
+
+        return wrongList;
     }
 
     @Override
     public List<CardDTO> searchList(CardQueryDTO query) {
         LambdaQueryWrapper<Card> wrapper = new LambdaQueryWrapper<>();
+        wrapper.isNull(Card::getLastReviewTime)
+                .or()
+                .ne(Card::getLastReviewTime, LocalDate.now()); // 当天未学的
         wrapper.eq(Card::getFoPkid, query.getFoPkid());
-        wrapper.orderByAsc(Card::getReviewTime);
+        wrapper.orderByAsc(Card::getReviewTime); // 按照复习时间升序
         wrapper.last("limit 10");
         List<Card> list = mapper.selectList(wrapper);
         List<CardDTO> cardDTOS = cardConverter.toDtoList(list);

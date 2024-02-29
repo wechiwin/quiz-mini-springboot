@@ -62,18 +62,20 @@ public class CardController {
     @GetMapping("/listByFoPkid/{foPkid}")
     public ModelAndView listByFoPkid(@PathVariable(value = "foPkid") Integer foPkid) {
         ModelAndView mav = new ModelAndView("card");
-        List<CardDTO> list = service.searchList(new CardQueryDTO().setFoPkid(foPkid));
-        // List<Card> list = service.listByFoPkid(foPkid);
         Folder folder = folderService.getById(foPkid);
         mav.addObject("folder", folder);
-        mav.addObject("cardList", list);
         return mav;
     }
 
     @PostMapping("submit")
-    public void submit(List<CardDTO> cardDTOList) {
-        Boolean flag = service.submit(cardDTOList);
+    @ResponseBody
+    public List<CardDTO> submit(@RequestBody List<CardDTO> cardList) {
+        return service.submit(cardList);
     }
 
-
+    @PostMapping("searchList")
+    @ResponseBody
+    public List<CardDTO> searchList(@RequestBody CardQueryDTO query) {
+        return service.searchList(query);
+    }
 }

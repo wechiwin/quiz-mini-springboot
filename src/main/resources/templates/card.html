@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Title</title>
-    <script src="/common/common-js.js" type="application/javascript"></script>
-    <script src="/js/axios.min.js" type="application/javascript"></script>
-    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>
+    <title>Studiamo l'italiano</title>
+    <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
+    <!--    <script src="/js/axios.min.js" type="application/javascript"></script>-->
+    <!--    <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--        <script type="text/javascript" src="static/js/jquery.min.js"></script>-->
+    <!--        <script type="text/javascript" src="static/js/vue@2.6.20.min.js"></script>-->
 
 </head>
 <body>
@@ -15,113 +19,345 @@
         <a th:href="@{/}" class="header-text">Studiamo!</a>
     </div>
 
-    <div>
+    <div v-if="cardList.length">
         <div>
             <h2>
                 Categoria: <span th:text="${folder.foName}">nome</span>
             </h2>
         </div>
 
-        <div>
-            <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:if="${cardStat.index== 0}"-->
-            <!--                 id="firstQuestion">-->
-            <!--                <h2>-->
-            <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
-            <!--                        th:text="${card.grammaticalPerson}"></span>-->
-            <!--                </h2>-->
+        <div v-if="!isCompleted">
+            <div class="list-item" v-for="(question, index) in cardList">
+                <div v-show="(index+1)==currentQuestionIndex">
+                    <!--            <div>-->
+                    <h2>
+                        <span v-if="!isFirstTime">🔔</span>
+                        {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
+                    </h2>
+                    <div class="inputArea">
+                        <label>
+                            <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
+                                   v-model="question.userAnswer"
+                                   @keyup.enter="handleCheckAnswer(question)"
+                                   :ref="`inputRef${index+1}`"
+                            >
+                        </label>
+                        <button @click="handleCheckAnswer" :disabled="question.questionDone">
+                            Controlla
+                        </button>
+                    </div>
 
-            <!--                <div class="inputArea">-->
-            <!--                    <label>-->
-            <!--                        <input type="text" spellcheck="false" id="firstInputText">-->
-            <!--                    </label>-->
-            <!--                    <button th:onclick="handleControlAnswer(0)">Controlla</button>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
-            <!--            <div class="list-item" th:each="card, cardStat : ${cardList}" th:id="questions">-->
-            <!--                <h2>-->
-            <!--                    <span th:text="${cardStat.count}"></span>. <span th:text="${card.verb}"></span> &#45;&#45; <span-->
-            <!--                        th:text="${card.grammaticalPerson}"></span>-->
-            <!--                </h2>-->
-            <!--                <div class="inputArea">-->
-            <!--                    <label>-->
-            <!--                        <input type="text" spellcheck="false" id="inputText">-->
-            <!--                    </label>-->
-            <!--                    <button th:onclick="'handleControlAnswer(' + ${cardStat.index} + ', ' + ${cardStat.count} + ')'">-->
-            <!--                        Controlla-->
-            <!--                    </button>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
-            <!--            <div class="list-item" v-for="(question,index) in cardList">-->
-            <!--                <h2>-->
-            <!--                    {index+1}. {question.verb} &#45;&#45; {question.grammaticalPerson}-->
-            <!--                </h2>-->
-            <!--            </div>-->
-
-            <!--            <div class="list-item" v-for="(question, index) in cardList">-->
-            <!--                <h2>-->
-            <!--                    {{ index+1 }}. {{ question.verb }} &#45;&#45; {{ question.grammaticalPerson }}-->
-            <!--                </h2>-->
-            <!--            </div>-->
-
-
-        </div>
-
-        <div>
-            <!-- 在 th:attr 中设置动态内容 -->
-            <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>
-            <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>
-            <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>
-            <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>
-            <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>
-        </div>
-
-        <hr/>
-
-        <div th:each="card : ${cardList}">
-            <p>Numero: <span th:text="${cardStat.count}">index</span> / total </p>
-            <p class="score">Punti: </p>
-            <div>
-                <button th:onclick="handleControlAnswer()">←</button>
-                <button th:onclick="handleControlAnswer()">→</button>
+                    <div v-show="showCorrectAnswer">
+                        <p style="color:coral">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+                        <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
+                        <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
+                    </div>
+                </div>
             </div>
-        </div>
 
+
+            <!--            <div>-->
+            <!--                &lt;!&ndash; 在 th:attr 中设置动态内容 &ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>&ndash;&gt;-->
+
+            <!--                <button v-for="button in buttons" :key="button.content" @click="handlePasteButtons(button.content)"-->
+            <!--                        class="copyButton">-->
+            <!--                    {{ button.content }}-->
+            <!--                </button>-->
+
+            <!--            </div>-->
+
+            <!--            <hr/>-->
+
+            <div>
+                <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
+                <!--                <p class="score">Punti: {{score}} 🎁 </p>-->
+                <!--                <div>-->
+                <!--                    <button @click="handlePrevNext('prev')">←</button>-->
+                <!--                    <button @click="handlePrevNext('next')">→</button>-->
+                <!--                </div>-->
+            </div>
+
+        </div>
 
     </div>
 
-
+    <div v-else>
+        <h2 style="color:coral"> Tutte finite! 👍😊👍 </h2>
+        <button @click="handleGetMoreQuestions">
+            Più domande! 💪
+        </button>
+        <button @click="handleToHome">
+            👉HomePage
+        </button>
+    </div>
 </div>
 
-<script>
+<script type="text/javascript">
     new Vue({
         el: '#app',
-        data: {
-            isCorrect: false,
-            currentIndex: 0,
-            cardList: [],
+        data() {
+            return {
+                ifCorrect: 0,
+                questionDone: false,
+                showCorrectAnswer: false,
+                score: 0,
+                currentQuestionIndex: 1,
+                cardList: [],
+                // cardList: data - cardList,
+                total: 0,
+                isCompleted: false,
+                userAnswer: '',
+                wrongQuestions: false,
+                foPkid: '',
+                // buttons: [
+                //     {content: 'è'},
+                //     {content: 'ò'},
+                //     {content: 'à'},
+                //     {content: 'ì'},
+                //     {content: 'ù'}
+                // ],
+                isFirstTime: true,
+            }
         },
         mounted() {
 
+            if (!this.wrongQuestions) {
+                this.getPkid()
+            }
+            // TODO 进来自动获取焦点
+            // this.$nextTick(() => {
+            //     const inputRef = this.$refs["inputRef1"][0];
+            //     if (inputRef) {
+            //         inputRef.focus();
+            //     }
+            // });
 
         },
-        methods: {}
+        methods: {
+            handleGetMoreQuestions() {
+                this.isFirstTime = true
+                this.questionDone = true
+                this.isCompleted = false
+                this.ifCorrect = 0
+                this.showCorrectAnswer = false
+                this.currentQuestionIndex = 1
+                this.getQuestions(this.foPkid)
+
+            },
+            handlePasteButtons(content) {
+                navigator.clipboard.writeText(content)
+                    .then(() => {
+                        // Update input with copied content
+                        this.$nextTick(() => {
+                            this.cardList[this.currentQuestionIndex - 1].userAnswer += content;
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            if (inputRef) {
+                                inputRef.focus();
+                            }
+                        });
+
+                    })
+                    .catch(err => {
+                        console.error('Unable to copy', err);
+                        // Handle error if necessary
+                    });
+            },
+
+            handleToHome() {
+                window.location.href = "/quiz";
+            },
+            handleCheckAnswer(question) {
+                // 判断答案
+                if (!this.showCorrectAnswer) {
+                    let userAnswer = this.cardList[this.currentQuestionIndex - 1].userAnswer
+                    if (userAnswer) {
+                        if (userAnswer.trim().toLowerCase() === this.cardList[this.currentQuestionIndex - 1].conjugation) {
+                            this.ifCorrect = 1
+                            this.score += 1
+                        } else {
+                            this.ifCorrect = 0
+                        }
+                    } else {
+                        this.ifCorrect = 0
+                    }
+
+                    this.questionDone = true
+                    this.showCorrectAnswer = true
+                    this.cardList[this.currentQuestionIndex - 1].ifCorrect = this.ifCorrect
+                    this.cardList[this.currentQuestionIndex - 1].questionDone = this.questionDone
+                } else {
+                    // 进行翻页
+                    if (this.currentQuestionIndex === this.total) {
+                        // 第一次提交
+                        if (this.isFirstTime) {
+                            this.currentQuestionIndex = this.total
+                            //     提交答案
+                            this.submit()
+                        } else {
+                            this.cardList = this.cardList.filter(question => question.ifCorrect === 0)
+                            console.log('第二轮错题', JSON.stringify(this.cardList))
+                            console.log('第二轮错题', this.cardList)
+                            if (this.cardList.length === 0) {
+                                this.isCompleted = true
+                            } else {
+                                this.cardList.forEach(question => {
+                                    question.userAnswer = ''
+                                    question.questionDone = false
+                                })
+                                this.currentQuestionIndex = 1
+                                this.total = this.cardList.length
+                                this.showCorrectAnswer = false
+                            }
+                        }
+                    } else {
+                        this.currentQuestionIndex += 1
+                        this.showCorrectAnswer = false
+                        this.questionDone = false
+
+                        this.$nextTick(() => {
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            if (inputRef) {
+                                inputRef.focus();
+                            }
+                        });
+                    }
+                }
+            },
+
+            submit() {
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/submit",
+                    data: JSON.stringify(this.cardList),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            this.cardList = result.data
+                            this.currentQuestionIndex = 1
+                            console.log('submit错题', this.cardList)
+                            this.isFirstTime = false
+                            this.showCorrectAnswer = false
+                            this.total = this.cardList.length
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Error:', error);
+                    }
+                });
+            },
+
+            handlePrevNext(flag) {
+                // 没有做过
+                // this.userAnswer = ''
+                // this.questionDone = false
+                // this.ifCorrect = false
+                this.showCorrectAnswer = false
+
+
+                if (flag === 'prev') {
+                    if (this.currentQuestionIndex === 1) {
+                        this.currentQuestionIndex = 1
+                    } else {
+                        this.currentQuestionIndex -= 1
+                    }
+
+
+                    this.$nextTick(() => {
+                        const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                        if (inputRef) {
+                            inputRef.focus();
+                        }
+                    });
+                } else {
+                    // 下一题
+                    if (this.currentQuestionIndex === this.total) {
+                        this.currentQuestionIndex = this.total
+                        this.isCompleted = true
+                        //     提交答案
+                        alert('submit!')
+                    } else {
+                        this.currentQuestionIndex += 1
+
+                        this.$nextTick(() => {
+                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
+                            if (inputRef) {
+                                inputRef.focus();
+                            }
+                        });
+                    }
+                }
+
+                if (this.cardList[currentQuestionIndex - 1].questionDone) {
+                    this.showCorrectAnswer = true
+                } else {
+                    this.showCorrectAnswer = false
+                    this.userAnswer = ''
+                    this.questionDone = false
+                    this.ifCorrect = 0
+                }
+
+            },
+            getPkid() {
+                // Get the current URL
+                var currentUrl = window.location.href;
+
+                var regex = /\/quiz\/card\/listByFoPkid\/(-?\d+)/;
+                var match = currentUrl.match(regex);
+
+                if (match && match.length > 1) {
+                    // Extracted parameter value
+                    var foPkid = match[1];
+
+                    // Now 'foPkid' contains the value "-1621147646"
+                    console.log('foPkid:', foPkid);
+                    this.foPkid = foPkid
+                    this.getQuestions(foPkid)
+
+                } else {
+                    console.log('Parameter not found');
+                }
+            },
+            getQuestions(foPkid) {
+                // this.cardList = [
+                //     {id: 1, q: 'aaa'},
+                //     {id: 2, q: 'bbb'},
+                // ]
+
+                var param = {
+                    foPkid
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            this.cardList = result.data;
+                            this.total = result.data.length
+                            console.log('cardList', this.cardList)
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Error fetching questions:', error);
+                    }
+                });
+
+
+            }
+        }
     })
 </script>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    function handleControlAnswer(index, count) {
-        if (index == 0) {
-            console.log('ok')
-            var firstQuestionDiv = document.getElementById('firstQuestion');
-            firstQuestionDiv.classList.add('hideQuestion');
-            document.getElementById('question2').classList.remove('hideQuestion')
-        }
-        console.log(count)
-    }
-
     function handlePaste(button) {
         // 获取按钮上的动态内容
         var dynamicContent = button.getAttribute('data-content');
@@ -142,7 +378,7 @@
         document.body.removeChild(tempTextarea);
 
         // 将复制的内容粘贴到input框中
-        document.getElementById('inputText').value += dynamicContent;
+        document.getElementById('inputRef' + this.currentQuestionIndex).value += dynamicContent;
 
         // 这里可以添加其他处理逻辑，例如提示用户复制成功
         // alert('Copied: ' + dynamicContent);
@@ -207,10 +443,44 @@
         font-weight: bold;
     }
 
+    @keyframes countdown {
+        0% {
+            /*transform: scale(1);*/
+            opacity: 1;
+        }
+        33% {
+            /*transform: scale(0.8);*/
+            opacity: 0.8;
+        }
+        66% {
+            /*transform: scale(0.6);*/
+            opacity: 0.6;
+        }
+        100% {
+            /*transform: scale(0);*/
+            opacity: 0;
+        }
+    }
+
+    .countdown {
+        display: inline-block;
+        font-size: 4em;
+        color: coral;
+        animation: countdown 3s linear forwards;
+    }
+
+
     p {
         color: #66757f;
         margin-top: 10px;
     }
+
+
+    .giusta {
+        color: coral;
+        font-weight: bold;
+    }
+
 
     button {
         padding: 10px 20px;

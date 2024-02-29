@@ -89,6 +89,12 @@ public class CardDTO implements Serializable {
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime modifyTime;
 
+    /**
+     * 最近一次学习时间
+     */
+    @ApiModelProperty(value = "最近一次学习时间")
+    private LocalDate lastReviewTime;
+
     // =================
 
     @ExcelProperty(value = "类别名称")
