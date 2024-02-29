@@ -78,4 +78,25 @@ public class CardController {
     public List<CardDTO> searchList(@RequestBody CardQueryDTO query) {
         return service.searchList(query);
     }
+
+    @PostMapping("add")
+    @ResponseBody
+    public boolean add(@RequestBody Card card) {
+        boolean save = service.save(card);
+        return save;
+    }
+
+    @PostMapping("update")
+    @ResponseBody
+    public boolean update(@RequestBody Card card) {
+        boolean update = service.updateById(card);
+        return update;
+    }
+
+    @PostMapping("delete")
+    @ResponseBody
+    public boolean delete(@RequestBody Card card) {
+        boolean delete = service.removeById(card);
+        return delete;
+    }
 }
