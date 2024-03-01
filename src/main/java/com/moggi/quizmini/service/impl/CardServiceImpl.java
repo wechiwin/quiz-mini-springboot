@@ -13,10 +13,10 @@ import com.moggi.quizmini.framework.pojo.Converter;
 import com.moggi.quizmini.mapper.CardMapper;
 import com.moggi.quizmini.mapper.FolderMapper;
 import com.moggi.quizmini.service.CardService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +28,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>
- * 服务实现类
- * </p>
+ * Card 服务实现类
  *
  * @author wechiwin
  * @since 2024-02-07
  */
 @Service
+@Slf4j
 public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements CardService {
 
     @Autowired
@@ -43,22 +42,6 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Autowired
     private FolderMapper folderMapper;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    // @Override
-    // @Transactional
-    // public boolean upload(byte[] bytes) {
-    //     EasyExcel.read(new ByteArrayInputStream(bytes))
-    //             .head(Card.class)
-    //             .registerReadListener(new ExcelListener<Card>() {
-    //                 @Override
-    //                 protected EnhanceMapper<Card> getMapper() {
-    //                     return mapper;
-    //                 }
-    //             }).sheet().doRead();
-    //     return true;
-    // }
 
     private Converter<CardDTO, Card> cardConverter = new Converter<>(CardDTO.class, Card.class);
 
@@ -143,6 +126,8 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
             cardDTO.setLastReviewTime(LocalDate.now());
         }
         List<Card> cardList = cardConverter.toEntityList(cardDTOList);
+        // 关闭autocommit提高效率
+        // https://blog.csdn.net/Jimmy12581/article/details/108115872
         long start = System.currentTimeMillis();
         try {
             Connection c = DriverManager.getConnection("jdbc:sqlite:quizmini.db");
@@ -156,12 +141,10 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
             throw new RuntimeException(e);
         }
         long end = System.currentTimeMillis();
-        System.out.println("更新所需时间：" + (end - start));
+        log.debug("更新所需时间：" + (end - start) + " 毫秒");
 
         // 这里的批量更新会抛出 nested exception is org.apache.ibatis.type.TypeException: Could not set parameters for mapping: ParameterMapping{property='__frch_item_1.foPkid', mode=IN, javaType=class java.lang.Integer, jdbcType=INTEGER, numericScale=null, resultMapId='null', jdbcTypeName='null', expression='null'}. Cause: org.apache.ibatis.type.TypeException: Error setting non null for parameter #12 with JdbcType INTEGER . Try setting a different JdbcType for this parameter or a different configuration property. Cause: java.lang.ArrayIndexOutOfBoundsException: 11
         // 加 noArgs 和 allArgs 注解没用
-        // 关闭autocommit提高效率 还是一条一条的更新/插入数据
-        // https://blog.csdn.net/Jimmy12581/article/details/108115872
         // int i = mapper.updateBatch(cardList);
 
         return wrongList;

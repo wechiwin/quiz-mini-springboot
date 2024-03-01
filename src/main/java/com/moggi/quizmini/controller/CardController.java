@@ -40,6 +40,7 @@ public class CardController {
     private ExcelExportHandler excelExportHandler;
 
     @PostMapping("upload")
+    @ResponseBody
     public void upload(@RequestParam("file") MultipartFile file) throws Exception {
         ExcelReadListener<CardExcelDTO> readListener = new ExcelReadListener<>();
         ExcelReader excelReader = EasyExcel.read(file.getInputStream(), CardExcelDTO.class, readListener).build();
