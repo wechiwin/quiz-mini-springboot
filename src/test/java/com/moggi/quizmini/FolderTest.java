@@ -22,7 +22,7 @@ public class FolderTest {
     @Test
     public void addData() {
         Folder folder = new Folder();
-        folder.setFoName("Imperativo");
+        folder.setFoName("TEST");
         int insert = folderMapper.insert(folder);
     }
 
