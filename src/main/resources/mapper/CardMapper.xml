@@ -2,4 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.moggi.quizmini.mapper.CardMapper">
 
+    <select id="searchList" resultType="com.moggi.quizmini.entity.Card">
+        SELECT ca_pkid,
+        fo_pkid,
+        grammatical_person,
+        verb,
+        conjugation,
+        eg_sentence,
+        review_time,
+        if_done,
+        hit_times,
+        create_time,
+        modify_time,
+        last_review_time
+        FROM card
+        <where>
+            (last_review_time IS NULL OR last_review_time != date())
+            <if test="query.foPkid != null and query.foPkid != ''">
+                AND fo_pkid = #{query.foPkid}
+            </if>
+        </where>
+        ORDER BY review_time ASC LIMIT 10
+    </select>
 </mapper>

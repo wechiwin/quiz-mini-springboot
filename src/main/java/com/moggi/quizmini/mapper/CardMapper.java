@@ -1,8 +1,12 @@
 package com.moggi.quizmini.mapper;
 
 
+import com.moggi.quizmini.dto.CardQueryDTO;
 import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.framework.dao.EnhanceMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +18,5 @@ import com.moggi.quizmini.framework.dao.EnhanceMapper;
  */
 public interface CardMapper extends EnhanceMapper<Card> {
 
+    List<Card> searchList(@Param("query") CardQueryDTO query);
 }
