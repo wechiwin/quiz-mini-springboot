@@ -37,6 +37,7 @@
                         <label>
                             <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
                                    v-model="question.userAnswer"
+                                   autocomplete="off"
                                    @keyup.enter="handleCheckAnswer(question)"
                                    :ref="`inputRef${currentQuestionIndex}`"
                             >
