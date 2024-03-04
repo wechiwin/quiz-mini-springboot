@@ -7,9 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * <p>
- * 主页 前端控制器
- * </p>
+ * 页面跳转 前端控制器
  *
  * @author wechiwin
  * @since 2024-02-07
@@ -27,5 +25,11 @@ public class PortalController {
         return "index";
     }
 
+    @GetMapping("/manage")
+    public String manage() {
+        // model.addAttribute("folderList", folderList);
+        // return "index";
+        return "manage";
+    }
 
 }
