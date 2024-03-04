@@ -91,7 +91,7 @@
         <button @click="handleGetMoreQuestions" v-if="showGetMoreQuestionButton">
             Più domande! 💪
         </button>
-        <h2 style="color:coral" v-else>Torna a Home entro 5 secondi...</h2>
+        <h2 style="color:coral" v-else>Torna a Home entro 3 secondi...</h2>
         <button @click="handleToHome">
             👉HomePage
         </button>
@@ -359,7 +359,7 @@
                                 console.log('没有更多问题了!')
                                 this.showGetMoreQuestionButton = false
                                 setTimeout(() => {
-                                    window.location.href = "/index.html";
+                                    window.location.href = "/quiz";
                                 }, 3000);
                             } else {
                                 this.cardList = result.data;
