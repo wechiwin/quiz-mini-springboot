@@ -115,7 +115,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
                 // 加入错题集
                 wrongList.add(cardDTO);
             } else { // 答对
-                cardDTO.setHitTimes(cardDTO.getHitTimes() + 1);
+                cardDTO.setHitTimes(null == cardDTO.getHitTimes() ? 0 : cardDTO.getHitTimes() + 1);
                 int days = ForgettingCurveEnum.getDaysByHitTimes(cardDTO.getHitTimes());
                 if (days == -1) {
                     cardDTO.setIfDone(YesOrNoEnum.Yes.getVal());
