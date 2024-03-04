@@ -88,9 +88,10 @@
 
     <div v-else>
         <h2 style="color:coral"> Tutte finite! 👍😊👍 </h2>
-        <button @click="handleGetMoreQuestions">
+        <button @click="handleGetMoreQuestions" v-if="showGetMoreQuestionButton">
             Più domande! 💪
         </button>
+        <h2 style="color:coral" v-else>Torna a Home entro 5 secondi...</h2>
         <button @click="handleToHome">
             👉HomePage
         </button>
@@ -122,6 +123,7 @@
                 //     {content: 'ù'}
                 // ],
                 isFirstTime: true,
+                showGetMoreQuestionButton: true,
             }
         },
         mounted() {
@@ -352,9 +354,20 @@
                     contentType: "application/json",
                     success: (result) => {
                         if (result.status === 200) {
-                            this.cardList = result.data;
-                            this.total = result.data.length
+                            if (result.data.length === 0) {
+                                // 问题已经答完了
+                                console.log('没有更多问题了!')
+                                this.showGetMoreQuestionButton = false
+                                setTimeout(() => {
+                                    window.location.href = "/index.html";
+                                }, 3000);
+                            } else {
+                                this.cardList = result.data;
+                                this.total = result.data.length
+                            }
                             console.log('cardList', this.cardList)
+
+
                         }
                     },
                     error: (error) => {
