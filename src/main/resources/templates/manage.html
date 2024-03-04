@@ -2,9 +2,415 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Studiamo l'italiano</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>-->
+    <!--    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 </head>
 <body>
-$END$
+
+<div id="app">
+    <div class="header">
+        <a href="/" class="header-text">Studiamo!</a>
+    </div>
+
+    <h3>
+        Scarica & Carica
+    </h3>
+    <button>Scarica Template 📄</button>
+    <button>Carica Template ☁️</button>
+
+    <h3>
+        Modifica Categorie
+    </h3>
+
+    <table class="list-table">
+        <thead>
+        <tr>
+            <th>Categorie</th>
+            <th>Modifica</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item, index) in list" :key="index">
+            <td>{{ item.foName }}</td>
+            <td>
+                <button @click="editItem(index)">Modifica</button>
+                <button @click="editQuestion(index)">Modifica Domande</button>
+                <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="dialog" v-show="showDialog">
+        <h3>Categorie</h3>
+        <input type="text" v-model="newCategoryName"
+               style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+        <button id="promptOkBtn" @click="handleClickOk(currentIndex)">OK</button>
+        <button id="promptCancelBtn" @click="handleClickCancel">Annulla</button>
+    </div>
+
+    <table class="list-table">
+        <thead>
+        <tr>
+            <th>Verbo</th>
+            <th>Personale</th>
+            <th>Congiungazione</th>
+            <th>Modifica</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item, index) in questionList" :key="item.caPkid">
+            <td>{{ item.verb }}</td>
+            <td>{{ item.grammaticalPerson }}</td>
+            <td>{{ item.conjugation }}</td>
+            <td>
+                <button @click="editItem(index)">Modifica</button>
+                <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="dialog" v-show="showQuestionDialog">
+        <h3>Domande</h3>
+        <input type="text" v-model="newCategoryName"
+               style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+        <button id="promptOkBtn" @click="handleClickOk(currentIndex)">OK</button>
+        <button id="promptCancelBtn" @click="handleClickCancel">Annulla</button>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                list: [],
+                questionList: [],
+                itemDeleting: false,
+                showDialog: false,
+                newCategoryName: '',
+                currentIndex: null,
+                showQuestionDialog: false,
+            }
+        },
+        mounted() {
+            this.getList();
+        },
+        methods: {
+            handleClickOk(index) {
+                if (this.newCategoryName) {
+                    this.$set(this.list, index, {...this.list[index], foName: this.newCategoryName});
+                }
+                this.showDialog = false
+            },
+            editQuestion(index) {
+                console.log('', index)
+            },
+            editItem(index) {
+                // Implement your edit logic here
+                this.showDialog = true
+                this.newCategoryName = this.list[index].foName
+                this.currentIndex = index
+            },
+            deleteItem(index) {
+                // Implement your delete logic here
+                if (confirm('Are you sure you want to delete this item?')) {
+                    this.itemDeleting = true;
+                    setTimeout(() => {
+                        this.list.splice(index, 1);
+                        this.itemDeleting = false;
+                    }, 500); // Simulating an asynchronous operation
+                }
+            },
+
+            handleClickCancel() {
+                this.showDialog = false
+                this.newCategoryName = ''
+            },
+
+            getList() {
+                var _this = this;
+                var param = _this.searchList;
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/folder/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (result.status == 200) {
+                            console.log(result)
+                            _this.list = result.data;
+                        }
+                    }
+                });
+            },
+            handleToHome() {
+                window.location.href = "/quiz";
+            },
+            submit() {
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/submit",
+                    data: JSON.stringify(this.cardList),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            this.cardList = result.data
+                            this.currentQuestionIndex = 1
+                            console.log('submit错题', this.cardList)
+                            this.isFirstTime = false
+                            this.showCorrectAnswer = false
+                            this.total = this.cardList.length
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Error:', error);
+                    }
+                });
+            },
+
+            getPkid() {
+                // Get the current URL
+                var currentUrl = window.location.href;
+
+                var regex = /\/quiz\/card\/listByFoPkid\/(-?\d+)/;
+                var match = currentUrl.match(regex);
+
+                if (match && match.length > 1) {
+                    // Extracted parameter value
+                    var foPkid = match[1];
+
+                    // Now 'foPkid' contains the value "-1621147646"
+                    console.log('foPkid:', foPkid);
+                    this.foPkid = foPkid
+                    this.getQuestions(foPkid)
+
+                } else {
+                    console.log('Parameter not found');
+                }
+            },
+            getQuestions(foPkid) {
+                // this.cardList = [
+                //     {id: 1, q: 'aaa'},
+                //     {id: 2, q: 'bbb'},
+                // ]
+
+                var param = {
+                    foPkid
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            this.cardList = result.data;
+                            this.total = result.data.length
+                            console.log('cardList', this.cardList)
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Error fetching questions:', error);
+                    }
+                });
+
+
+            }
+        }
+    })
+</script>
+
 </body>
+<style>
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f8fa;
+        padding: 0;
+    }
+
+    code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+    }
+
+
+    .header {
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /*width: 100vw;*/
+        /*background-color: #bcd2e8; !* Twitter-like blue background color *!*/
+        /*border-bottom: 1px solid #0f89d1; !* Slightly darker border color *!*/
+    }
+
+    .header-text {
+        color: #1da1f2;
+        text-decoration: underline;
+        text-align: center;
+        display: block;
+        font-size: 2em;
+        margin-block-start: 0.67em;
+        margin-block-end: 0.67em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+
+    input {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #e1e8ed;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #1da1f2;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0e81d4;
+    }
+
+    button:disabled {
+        background-color: darkgrey;
+        cursor: not-allowed;
+    }
+
+    .deleteButton {
+        background-color: firebrick;
+    }
+
+    .deleteButton:hover {
+        background-color: darkgray;
+    }
+
+    .dialog {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .list-table {
+        width: 60%; /* Adjust the width as needed */
+        margin: 20px auto; /* Center the table */
+        border-collapse: collapse;
+    }
+
+    .list-table th,
+    .list-table td {
+        border: 1px solid #ccc;
+        padding: 12px; /* Adjust the padding as needed */
+        text-align: center;
+    }
+
+    .list-table th {
+        background-color: #f2f2f2;
+    }
+
+
+    /*移动端*/
+    @media screen and (max-width: 750px) {
+        .list-content {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+        }
+
+        .list-item {
+            display: list-item;
+            width: 200px;
+            line-height: 40px;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 5px;
+            background-color: #ffffff;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #000000;
+        }
+
+        .list-item:hover {
+            background-color: #f5f8fa;
+        }
+
+
+    }
+
+    /*PC端*/
+    @media screen and (min-width: 751px) {
+        .list-content {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            flex-direction: column;
+            height: 86vh;
+            align-items: center;
+            align-content: center;
+        }
+
+        .list-item {
+            display: list-item;
+            width: 200px;
+            line-height: 40px;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 5px;
+            background-color: #ffffff;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #000000;
+        }
+
+        .list-item:hover {
+            background-color: #f5f8fa;
+        }
+
+    }
+
+</style>
 </html>

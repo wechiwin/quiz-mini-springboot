@@ -145,6 +145,8 @@
                     if (inputRef) {
                         inputRef.focus();
                     }
+
+
                 });
             },
             handleGetMoreQuestions() {
@@ -220,6 +222,7 @@
                                 this.currentQuestionIndex = 1
                                 this.total = this.cardList.length
                                 this.showCorrectAnswer = false
+                                this.handleFirstFocus()
                             }
                         }
                     } else {
@@ -252,6 +255,7 @@
                             this.isFirstTime = false
                             this.showCorrectAnswer = false
                             this.total = this.cardList.length
+                            this.handleFirstFocus()
                         }
                     },
                     error: (error) => {
