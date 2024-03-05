@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:quizmini.db
+    url: jdbc:sqlite:./quizmini.db
   resources:
     static-locations: classpath:/static/
   thymeleaf:
