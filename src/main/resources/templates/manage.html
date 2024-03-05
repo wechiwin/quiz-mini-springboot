@@ -13,75 +13,121 @@
 
 <div id="app">
     <div class="header">
-        <a href="/" class="header-text">Studiamo!</a>
+        <a th:href="@{/}" class="header-text">Studiamo!</a>
     </div>
 
-    <h3>
-        Scarica & Carica
-    </h3>
-    <button>Scarica Template 📄</button>
-    <button>Carica Template ☁️</button>
+    <div class="content">
+        <div v-if="showModifyQuestionContent">
+            <h3>
+                Modifica domande
+            </h3>
+            <div class="right">
+                <button>Scarica Template 📄</button>
+                <button>Carica Template ☁️</button>
+                <button @click="handleAddQuestions">Aggiunge +</button>
+                <button @click="handleGoBackFolder">Torna↩️</button>
+            </div>
+            <!--        问题 table-->
+            <table class="list-table" v-show="showModifyQuestionContent">
+                <thead>
+                <tr>
+                    <th>Verbo</th>
+                    <th>Personale</th>
+                    <th>Congiungazione</th>
+                    <th>Modifica</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(item, index) in questionList" :key="item.caPkid">
+                    <td>{{ item.verb }}</td>
+                    <td>{{ item.grammaticalPerson }}</td>
+                    <td>{{ item.conjugation }}</td>
+                    <td>
+                        <button @click="handleEditFolderName(index)">Modifica</button>
+                        <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-    <h3>
-        Modifica Categorie
-    </h3>
+        </div>
 
-    <table class="list-table">
-        <thead>
-        <tr>
-            <th>Categorie</th>
-            <th>Modifica</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(item, index) in list" :key="index">
-            <td>{{ item.foName }}</td>
-            <td>
-                <button @click="editItem(index)">Modifica</button>
-                <button @click="editQuestion(index)">Modifica Domande</button>
-                <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <div v-else>
+            <h3>
+                Modifica Categorie
+            </h3>
 
-    <div class="dialog" v-show="showDialog">
-        <h3>Categorie</h3>
-        <input type="text" v-model="newCategoryName"
-               style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
-        <button id="promptOkBtn" @click="handleClickOk(currentIndex)">OK</button>
-        <button id="promptCancelBtn" @click="handleClickCancel">Annulla</button>
+            <div class="right">
+                <button @click="handleAddFolder">Aggiunge +</button>
+            </div>
+
+            <!--        folder table -->
+            <table class="list-table">
+                <thead>
+                <tr>
+                    <th>Categorie</th>
+                    <th>Modifica</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(item, index) in list" :key="index">
+                    <td>{{ item.foName }}</td>
+                    <td>
+                        <button @click="handleEditFolderName(index)">Modifica</button>
+                        <button @click="handleEditQuestions(index)">Modifica Domande</button>
+                        <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <div class="dialog" v-show="showUpdateDialog">
+            <h3>Modifica Categorie</h3>
+            <input type="text" v-model="newCategoryName"
+                   style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <button id="promptOkBtn" @click="handleClickOk(currentIndex)">OK</button>
+            <button id="promptCancelBtn" @click="handleClickCancel">Annulla</button>
+        </div>
+
+        <div class="dialog" v-show="showAddDialog">
+            <h3>Add Categorie</h3>
+            <input type="text" v-model="newCategoryName"
+                   style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <button id="promptOkBtn" @click="handleClickAdd">Add</button>
+            <button id="promptCancelBtn" @click="handleClickCancelAdd">Annulla</button>
+        </div>
+
+        <div class="dialog" v-show="showQuestionDialog">
+            <h3>Domande</h3>
+            <div class="input-question">
+                <span>Verbo:</span>
+                <input type="text" v-model="addQuestion.verb">
+            </div>
+            <div class="input-question">
+                <span>Personale:</span>
+                <input type="text" v-model="addQuestion.grammaticalPerson">
+            </div>
+            <div class="input-question">
+                <span>Congiungazione:</span>
+                <input type="text" v-model="addQuestion.conjugation">
+            </div>
+            <div class="input-question">
+                <span>Esempi:</span>
+                <input type="text" v-model="addQuestion.egSentence">
+            </div>
+
+            <button @click="handleClickQuestionOK">OK</button>
+            <button @click="handleClickQuestionCancel">Annulla</button>
+        </div>
+
+
     </div>
 
-    <table class="list-table">
-        <thead>
-        <tr>
-            <th>Verbo</th>
-            <th>Personale</th>
-            <th>Congiungazione</th>
-            <th>Modifica</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(item, index) in questionList" :key="item.caPkid">
-            <td>{{ item.verb }}</td>
-            <td>{{ item.grammaticalPerson }}</td>
-            <td>{{ item.conjugation }}</td>
-            <td>
-                <button @click="editItem(index)">Modifica</button>
-                <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-    <div class="dialog" v-show="showQuestionDialog">
-        <h3>Domande</h3>
-        <input type="text" v-model="newCategoryName"
-               style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
-        <button id="promptOkBtn" @click="handleClickOk(currentIndex)">OK</button>
-        <button id="promptCancelBtn" @click="handleClickCancel">Annulla</button>
-    </div>
 
 </div>
 
@@ -93,44 +139,204 @@
                 list: [],
                 questionList: [],
                 itemDeleting: false,
-                showDialog: false,
+                showUpdateDialog: false,
                 newCategoryName: '',
                 currentIndex: null,
                 showQuestionDialog: false,
+                showModifyQuestionContent: false,
+                showAddDialog: false,
+                addQuestion: {
+                    foPkid: 0,
+                    grammaticalPerson: "",
+                    verb: "",
+                    conjugation: "",
+                    egSentence: "",
+                }
             }
         },
         mounted() {
             this.getList();
         },
         methods: {
+            handleClickQuestionOK() {
+                console.log('handleClickQuestionOK', this.addQuestion)
+                if (
+                    this.addQuestion.grammaticalPerson &&
+                    this.addQuestion.verb &&
+                    this.addQuestion.conjugation
+                ) {
+                    var _this = this
+                    var param = this.addQuestion
+                    $.ajax({
+                        type: "POST",
+                        url: "/quiz/card/add",
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (result) {
+                            if (result.status == 200) {
+                                console.log(result)
+                                // _this.questionList = result.data
+                            }
+                        }
+                    });
+
+                } else {
+                    alert('Please check your input!')
+                }
+            },
+
+            handleClickQuestionCancel() {
+                this.showQuestionDialog = false
+                this.addQuestion.grammaticalPerson = ''
+                this.addQuestion.verb = ''
+                this.addQuestion.conjugation = ''
+                this.addQuestion.egSentence = ''
+            },
+            handleAddQuestions() {
+                this.showQuestionDialog = true
+
+            },
+
+            handleGoBackFolder() {
+                this.showModifyQuestionContent = false
+            },
+
+            handleClickCancelAdd() {
+                this.newCategoryName = ''
+                this.showAddDialog = false
+
+            },
+
+            handleClickAdd() {
+                if (this.newCategoryName) {
+                    var _this = this
+                    var param = {
+                        "foName": this.newCategoryName,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "/quiz/folder/add",
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (result) {
+                            if (result.status == 200) {
+                                console.log(result)
+                                // alert('Fatto!')
+                                _this.getList();
+                            }
+                        }
+                    });
+
+                    this.newCategoryName = ''
+                    this.showAddDialog = false
+                } else {
+                    alert('Cannot add blank folder name!')
+                }
+            },
+            handleAddFolder() {
+                this.showAddDialog = true
+            },
             handleClickOk(index) {
                 if (this.newCategoryName) {
-                    this.$set(this.list, index, {...this.list[index], foName: this.newCategoryName});
+                    // this.$set(this.list, index, {...this.list[index], foName: this.newCategoryName});
+                    let currentFolder = this.list[index]
+                    if (currentFolder.foName !== this.newCategoryName) {
+                        var _this = this;
+                        currentFolder.foName = this.newCategoryName
+                        var param = currentFolder;
+                        $.ajax({
+                            type: "POST",
+                            url: "/quiz/folder/update",
+                            data: JSON.stringify(param),
+                            dataType: "json",
+                            contentType: "application/json",
+                            success: function (result) {
+                                if (result.status == 200) {
+                                    console.log(result)
+                                    // alert('Fatto!')
+                                }
+                            }
+                        });
+                    }
+                    this.showUpdateDialog = false
+                } else {
+                    alert('Name cannot be blank!')
                 }
-                this.showDialog = false
             },
-            editQuestion(index) {
-                console.log('', index)
+            handleEditQuestions(index) {
+                this.showModifyQuestionContent = true
+                this.addQuestion.foPkid = this.list[index].foPkid
+                var param = {
+                    "foPkid": this.list[index].foPkid
+                }
+                var _this = this
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (result.status == 200) {
+                            console.log(result)
+                            _this.questionList = result.data
+                        }
+                    }
+                });
             },
-            editItem(index) {
+
+            handleEditFolderName(index) {
                 // Implement your edit logic here
-                this.showDialog = true
+                this.showUpdateDialog = true
                 this.newCategoryName = this.list[index].foName
                 this.currentIndex = index
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (result.status == 200) {
+                            console.log(result)
+                            _this.getList();
+                            _this.itemDeleting = false;
+                            // alert('Fatto!')
+                        }
+                    }
+                });
             },
             deleteItem(index) {
                 // Implement your delete logic here
                 if (confirm('Are you sure you want to delete this item?')) {
                     this.itemDeleting = true;
-                    setTimeout(() => {
-                        this.list.splice(index, 1);
-                        this.itemDeleting = false;
-                    }, 500); // Simulating an asynchronous operation
+                    var _this = this
+                    var param = this.list[index]
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/quiz/folder/delete",
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (result) {
+                            if (result.status == 200) {
+                                console.log(result)
+                                _this.getList();
+                                _this.itemDeleting = false;
+                                // alert('Fatto!')
+                            }
+                        }
+                    });
+
+
                 }
             },
 
             handleClickCancel() {
-                this.showDialog = false
+                this.showUpdateDialog = false
                 this.newCategoryName = ''
             },
 
@@ -244,9 +450,9 @@
         padding: 0;
     }
 
-    code {
-        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-        monospace;
+    .content {
+        margin: 0 auto;
+        text-align: center;
     }
 
 
@@ -280,6 +486,7 @@
         border: 1px solid #e1e8ed;
         border-radius: 5px;
         font-size: 16px;
+        width: 26vw;
     }
 
     button {
@@ -311,6 +518,12 @@
         background-color: darkgray;
     }
 
+    .right {
+        text-align: right;
+        width: 60%;
+        margin: 0 auto;
+    }
+
     .dialog {
         position: fixed;
         top: 50%;
@@ -320,6 +533,13 @@
         padding: 20px;
         border: 1px solid #ccc;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-question {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .list-table {

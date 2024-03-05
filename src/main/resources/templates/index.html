@@ -18,6 +18,7 @@
 <div id="app">
     <div class="header">
         <a th:href="@{/}" class="header-text">Studiamo!</a>
+        <button class="fix-button-right" @click="handleToManage">Manage</button>
     </div>
 
     <div id="folderList" class="list-content">
@@ -63,6 +64,9 @@
             this.getList();
         },
         methods: {
+            handleToManage() {
+                window.location.href = "/quiz/manage";
+            },
             getList: getList,
             navigateAndPost(foPkid) {
                 // Perform a POST request using the Fetch API
@@ -133,6 +137,27 @@
         margin-inline-start: 0px;
         margin-inline-end: 0px;
         font-weight: bold;
+    }
+
+    button {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #1da1f2;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0e81d4;
+    }
+
+    .fix-button-right {
+        position: fixed;
+        right: 0;
     }
 
 
