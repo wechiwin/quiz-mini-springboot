@@ -2,4 +2,4 @@
 /target/
 .idea
 *.iml
-/hospital_logs
+/logs
