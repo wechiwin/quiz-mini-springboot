@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 文件夹 前端控制器
@@ -27,6 +29,7 @@ public class FolderController {
     @PostMapping("searchList")
     public List<Folder> searchList() {
         List<Folder> folderList = service.list();
+        folderList = folderList.stream().sorted(Comparator.comparing(Folder::getFoName)).collect(Collectors.toList());
         // List<Folder> folderList = new ArrayList<>();
         // for (int i = 0; i < 20; i++) {
         //     Folder folder = new Folder();
