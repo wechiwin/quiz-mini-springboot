@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Studiamo l'italiano</title>
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <!--    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
+    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
     <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
-    <!--    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>-->
-    <!--    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
+    <!--        <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 </head>
 <body>
 
@@ -43,8 +43,9 @@
                     <td>{{ item.grammaticalPerson }}</td>
                     <td>{{ item.conjugation }}</td>
                     <td>
-                        <button @click="handleEditFolderName(index)">Modifica</button>
-                        <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina
+                        <button @click="handleEditQuestion(index)">Modifica</button>
+                        <button @click="handleDeleteQuestion(index)" :disabled="itemDeleting" class="deleteButton">
+                            Elimina
                         </button>
                     </td>
                 </tr>
@@ -72,10 +73,10 @@
                 </thead>
                 <tbody>
                 <tr v-for="(item, index) in list" :key="index">
-                    <td>{{ item.foName }}</td>
+                    <td @click="handleEditQuestions(index)" class="manage-folder-name">{{ item.foName }}</td>
                     <td>
                         <button @click="handleEditFolderName(index)">Modifica</button>
-                        <button @click="handleEditQuestions(index)">Modifica Domande</button>
+                        <!--                        <button @click="handleEditQuestions(index)">Modifica Domande</button>-->
                         <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina
                         </button>
                     </td>
@@ -158,6 +159,25 @@
             this.getList();
         },
         methods: {
+            getQuestions() {
+                var param = {
+                    "foPkid": this.addQuestion.foPkid
+                }
+                var _this = this
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/searchList",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (result.status == 200) {
+                            // console.log(result)
+                            _this.questionList = result.data
+                        }
+                    }
+                });
+            },
             handleClickQuestionOK() {
                 console.log('handleClickQuestionOK', this.addQuestion)
                 if (
@@ -175,8 +195,10 @@
                         contentType: "application/json",
                         success: function (result) {
                             if (result.status == 200) {
-                                console.log(result)
+                                // console.log(result)
                                 // _this.questionList = result.data
+                                _this.getQuestions()
+                                _this.showQuestionDialog = false
                             }
                         }
                     });
@@ -195,7 +217,10 @@
             },
             handleAddQuestions() {
                 this.showQuestionDialog = true
-
+                this.addQuestion.grammaticalPerson = ''
+                this.addQuestion.verb = ''
+                this.addQuestion.conjugation = ''
+                this.addQuestion.egSentence = ''
             },
 
             handleGoBackFolder() {
@@ -222,9 +247,10 @@
                         contentType: "application/json",
                         success: function (result) {
                             if (result.status == 200) {
-                                console.log(result)
+                                // console.log(result)
                                 // alert('Fatto!')
                                 _this.getList();
+
                             }
                         }
                     });
@@ -254,7 +280,7 @@
                             contentType: "application/json",
                             success: function (result) {
                                 if (result.status == 200) {
-                                    console.log(result)
+                                    console.log('handleClickOk--result', result)
                                     // alert('Fatto!')
                                 }
                             }
@@ -268,23 +294,7 @@
             handleEditQuestions(index) {
                 this.showModifyQuestionContent = true
                 this.addQuestion.foPkid = this.list[index].foPkid
-                var param = {
-                    "foPkid": this.list[index].foPkid
-                }
-                var _this = this
-                $.ajax({
-                    type: "POST",
-                    url: "/quiz/card/searchList",
-                    data: JSON.stringify(param),
-                    dataType: "json",
-                    contentType: "application/json",
-                    success: function (result) {
-                        if (result.status == 200) {
-                            console.log(result)
-                            _this.questionList = result.data
-                        }
-                    }
-                });
+                this.getQuestions()
             },
 
             handleEditFolderName(index) {
@@ -300,7 +310,7 @@
                     contentType: "application/json",
                     success: function (result) {
                         if (result.status == 200) {
-                            console.log(result)
+                            // console.log(result)
                             _this.getList();
                             _this.itemDeleting = false;
                             // alert('Fatto!')
@@ -323,7 +333,7 @@
                         contentType: "application/json",
                         success: function (result) {
                             if (result.status == 200) {
-                                console.log(result)
+                                // console.log(result)
                                 _this.getList();
                                 _this.itemDeleting = false;
                                 // alert('Fatto!')
@@ -351,7 +361,7 @@
                     contentType: "application/json",
                     success: function (result) {
                         if (result.status == 200) {
-                            console.log(result)
+                            // console.log(result)
                             _this.list = result.data;
                         }
                     }
@@ -360,78 +370,6 @@
             handleToHome() {
                 window.location.href = "/quiz";
             },
-            submit() {
-                $.ajax({
-                    type: "POST",
-                    url: "/quiz/card/submit",
-                    data: JSON.stringify(this.cardList),
-                    dataType: "json",
-                    contentType: "application/json",
-                    success: (result) => {
-                        if (result.status === 200) {
-                            this.cardList = result.data
-                            this.currentQuestionIndex = 1
-                            console.log('submit错题', this.cardList)
-                            this.isFirstTime = false
-                            this.showCorrectAnswer = false
-                            this.total = this.cardList.length
-                        }
-                    },
-                    error: (error) => {
-                        console.error('Error:', error);
-                    }
-                });
-            },
-
-            getPkid() {
-                // Get the current URL
-                var currentUrl = window.location.href;
-
-                var regex = /\/quiz\/card\/listByFoPkid\/(-?\d+)/;
-                var match = currentUrl.match(regex);
-
-                if (match && match.length > 1) {
-                    // Extracted parameter value
-                    var foPkid = match[1];
-
-                    // Now 'foPkid' contains the value "-1621147646"
-                    console.log('foPkid:', foPkid);
-                    this.foPkid = foPkid
-                    this.getQuestions(foPkid)
-
-                } else {
-                    console.log('Parameter not found');
-                }
-            },
-            getQuestions(foPkid) {
-                // this.cardList = [
-                //     {id: 1, q: 'aaa'},
-                //     {id: 2, q: 'bbb'},
-                // ]
-
-                var param = {
-                    foPkid
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "/quiz/card/searchList",
-                    data: JSON.stringify(param),
-                    dataType: "json",
-                    contentType: "application/json",
-                    success: (result) => {
-                        if (result.status === 200) {
-                            this.cardList = result.data;
-                            this.total = result.data.length
-                            console.log('cardList', this.cardList)
-                        }
-                    },
-                    error: (error) => {
-                        console.error('Error fetching questions:', error);
-                    }
-                });
-
-
-            }
         }
     })
 </script>
@@ -522,6 +460,11 @@
         text-align: right;
         width: 60%;
         margin: 0 auto;
+    }
+
+    .manage-folder-name {
+        cursor: pointer;
+        text-decoration: underline;
     }
 
     .dialog {
