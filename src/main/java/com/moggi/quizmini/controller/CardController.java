@@ -57,7 +57,7 @@ public class CardController {
 
     @PostMapping("downloadTemplate")
     public void downloadTemplate(HttpServletResponse response) {
-        excelExportHandler.downloadTemplate(response, "template", Card.class);
+        excelExportHandler.downloadTemplate(response, "template", CardExcelDTO.class);
     }
 
     @GetMapping("/listByFoPkid/{foPkid}")
