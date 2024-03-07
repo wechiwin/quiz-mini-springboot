@@ -144,24 +144,16 @@
                 this.getPkid()
             }
 
-
-            // TODO 进来自动获取焦点
-            this.handleFirstFocus()
-
         },
         methods: {
             handleFirstFocus() {
-                console.log('handleFirstFocus!!!');
                 this.$nextTick(() => {
                     console.log('this.$refs:', this.$refs);
-                    console.log('this.currentQuestionIndex', this.currentQuestionIndex)
                     const inputRef = this.$refs["inputRef1"][0];
                     console.log('handleCheckAnswer--inputRef', inputRef)
                     if (inputRef) {
                         inputRef.focus();
                     }
-
-
                 });
             },
             handleGetMoreQuestions() {
@@ -340,9 +332,6 @@
                 if (match && match.length > 1) {
                     // Extracted parameter value
                     var foPkid = match[1];
-
-                    // Now 'foPkid' contains the value "-1621147646"
-                    console.log('foPkid:', foPkid);
                     this.foPkid = foPkid
                     this.getQuestions(foPkid)
 
@@ -380,10 +369,9 @@
                                     this.isPhrase = false
                                 }
                                 this.total = result.data.length
+                                this.handleFirstFocus()
                             }
                             console.log('cardList', this.cardList)
-
-
                         }
                     },
                     error: (error) => {
