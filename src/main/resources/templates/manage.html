@@ -6,8 +6,8 @@
     <title>Studiamo l'italiano</title>
     <!--    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
     <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
-    <!--    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>-->
-    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 </head>
 <body>
 
@@ -23,7 +23,7 @@
     <div class="content">
         <div v-if="showModifyQuestionContent">
             <h3>
-                Modifica domande
+                Modifica domande - {{currentFolder}}
             </h3>
             <div class="right">
                 <button @click="handleDownloadTemplate">Scarica Template ↓</button>
@@ -162,6 +162,7 @@
                     egSentence: "",
                 },
                 isUpdateQuestion: false,
+                currentFolder: '',
 
             }
 
@@ -338,6 +339,7 @@
 
             handleGoBackFolder() {
                 this.showModifyQuestionContent = false
+                this.currentFolder = ''
             },
 
             handleClickCancelAdd() {
@@ -407,6 +409,7 @@
             handleGoToQuestions(index) {
                 this.showModifyQuestionContent = true
                 this.addQuestion.foPkid = this.list[index].foPkid
+                this.currentFolder = this.list[index].foName
                 this.getQuestions()
             },
 

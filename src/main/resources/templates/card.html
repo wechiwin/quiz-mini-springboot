@@ -8,9 +8,9 @@
     <!--        <script src="/js/axios.min.js" type="application/javascript"></script>-->
     <!--        <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
     <!--    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
-    <!--    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>-->
     <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>
+    <!--    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 </head>
 <body>
 <div id="app" th:attr="data-cardList=${cardList}">
@@ -31,17 +31,28 @@
                     <!--            <div>-->
                     <h2>
                         <span v-if="!isFirstTime">🔔</span>
-                        {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
+                        <span v-if="!isPhrase">
+                             {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
+                        </span>
+                        <span v-else>
+                             {{ index + 1 }}. {{ question.verb }}
+                        </span>
+
                     </h2>
                     <div class="inputArea">
-                        <label>
-                            <input type="text" spellcheck="false" :id="`inputRef${index+1}`"
-                                   v-model="question.userAnswer"
-                                   autocomplete="off"
-                                   @keyup.enter="handleCheckAnswer(question)"
-                                   :ref="`inputRef${currentQuestionIndex}`"
-                            >
-                        </label>
+                        <input v-if="!isPhrase"
+                               type="text" spellcheck="false" :id="`inputRef${index+1}`"
+                               v-model="question.userAnswer"
+                               autocomplete="off"
+                               @keyup.enter="handleCheckAnswer(question)"
+                               :ref="`inputRef${currentQuestionIndex}`">
+
+                        <textarea v-else
+                                  v-model="question.userAnswer" autocomplete="off" spellcheck="false"
+                                  :id="`inputRef${index+1}`" :ref="`inputRef${currentQuestionIndex}`"
+                                  @keyup.enter="handleCheckAnswer(question)"
+                        ></textarea>
+
                         <button @click="handleCheckAnswer" :disabled="question.questionDone">
                             Controlla
                         </button>
@@ -124,6 +135,7 @@
                 // ],
                 isFirstTime: true,
                 showGetMoreQuestionButton: true,
+                isPhrase: false,
             }
         },
         mounted() {
@@ -131,6 +143,7 @@
             if (!this.wrongQuestions) {
                 this.getPkid()
             }
+
 
             // TODO 进来自动获取焦点
             this.handleFirstFocus()
@@ -337,12 +350,10 @@
                     console.log('Parameter not found');
                 }
             },
+            containsChinese(str) {
+                return /[\u4e00-\u9fa5]/.test(str);
+            },
             getQuestions(foPkid) {
-                // this.cardList = [
-                //     {id: 1, q: 'aaa'},
-                //     {id: 2, q: 'bbb'},
-                // ]
-
                 var param = {
                     foPkid
                 }
@@ -363,6 +374,11 @@
                                 }, 3000);
                             } else {
                                 this.cardList = result.data;
+                                if (this.containsChinese(this.cardList[0].verb)) {
+                                    this.isPhrase = true
+                                } else {
+                                    this.isPhrase = false
+                                }
                                 this.total = result.data.length
                             }
                             console.log('cardList', this.cardList)
