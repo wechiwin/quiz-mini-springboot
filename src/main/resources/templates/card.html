@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="light-mode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -16,6 +16,7 @@
 <div id="app" th:attr="data-cardList=${cardList}">
     <div class="header">
         <a th:href="@{/}" class="header-text">Studiamo!</a>
+        <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
     </div>
 
     <div v-if="cardList.length">
@@ -59,7 +60,7 @@
                     </div>
 
                     <div v-show="showCorrectAnswer">
-                        <p style="color:coral">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+                        <p class="coral-color">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
                         <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
                         <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
                     </div>
@@ -98,11 +99,11 @@
     </div>
 
     <div v-else>
-        <h2 style="color:coral"> Tutte finite! 👍😊👍 </h2>
+        <h2 class="coral-color"> Tutte finite! 👍😊👍 </h2>
         <button @click="handleGetMoreQuestions" v-if="showGetMoreQuestionButton">
             Più domande! 💪
         </button>
-        <h2 style="color:coral" v-else>Torna a Home entro 3 secondi...</h2>
+        <h2 class="coral-color" v-else>Torna a Home entro 3 secondi...</h2>
         <button @click="handleToHome">
             👉HomePage
         </button>
@@ -386,6 +387,10 @@
 </script>
 
 <script th:inline="javascript">
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark-mode');
+    }
+
     /*<![CDATA[*/
     function handlePaste(button) {
         // 获取按钮上的动态内容
@@ -434,6 +439,10 @@
         font-family: 'Arial', sans-serif;
         background-color: #f5f8fa;
         padding: 0;
+    }
+
+    .dark-mode body {
+        background-color: #52596e;
     }
 
     code {
@@ -532,6 +541,11 @@
         cursor: not-allowed;
     }
 
+    .dark-mode button:disabled {
+        background-color: #ebecee;
+        cursor: not-allowed;
+    }
+
     .fix-button-right {
         position: fixed;
         right: 0;
@@ -573,6 +587,39 @@
 
     .showQuestion {
         display: block;
+    }
+
+    .coral-color {
+        color: coral;
+    }
+
+    .dark-mode {
+        background-color: #52596e; /* Choose a dark background color */
+        color: #ced6e1; /* Choose a light text color */
+    }
+
+    .dark-mode button {
+        background-color: #223c5b; /* Choose a dark color for the button */
+        color: #ced6e1; /* Choose a light text color for the button */
+    }
+
+    .dark-mode p {
+        color: #ced6e1; /* Choose a light text color for the button */
+    }
+
+    .dark-mode .coral-color {
+        color: paleturquoise;
+    }
+
+    .dark-mode .giusta {
+        color: paleturquoise;
+        font-weight: bold;
+    }
+
+
+    .fix-button-right {
+        position: fixed;
+        right: 0;
     }
 
 </style>
