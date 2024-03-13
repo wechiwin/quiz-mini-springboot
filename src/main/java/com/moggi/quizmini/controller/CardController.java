@@ -4,6 +4,7 @@ package com.moggi.quizmini.controller;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.dto.CardQueryDTO;
@@ -41,7 +42,7 @@ public class CardController {
 
     @PostMapping("upload")
     @ResponseBody
-    public void upload(@RequestParam("file") MultipartFile file) throws Exception {
+    public boolean upload(@RequestParam("file") MultipartFile file) throws Exception {
         ExcelReadListener<CardExcelDTO> readListener = new ExcelReadListener<>();
         ExcelReader excelReader = EasyExcel.read(file.getInputStream(), CardExcelDTO.class, readListener).build();
         ReadSheet readSheet = EasyExcel.readSheet(0).build();
@@ -49,10 +50,7 @@ public class CardController {
         List<CardExcelDTO> cacheList = readListener.getCacheList();
         excelReader.finish();
 
-        boolean flag = service.upload(cacheList);
-        // todo 上传成功后是否需要跳转页面
-        // boolean flag = cardService.upload(bytes);
-        // return "redirect:/folder/list"; // 重定向到list接口
+        return service.upload(cacheList);
     }
 
     @PostMapping("downloadTemplate")
@@ -78,6 +76,12 @@ public class CardController {
     @ResponseBody
     public List<CardDTO> searchList(@RequestBody CardQueryDTO query) {
         return service.searchList(query);
+    }
+
+    @PostMapping("searchPage")
+    @ResponseBody
+    public Page<CardDTO> searchPage(@RequestBody CardQueryDTO query) {
+        return service.searchPage(query);
     }
 
     @PostMapping("add")

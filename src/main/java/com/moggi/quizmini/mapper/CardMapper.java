@@ -1,6 +1,8 @@
 package com.moggi.quizmini.mapper;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardQueryDTO;
 import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.framework.dao.EnhanceMapper;
@@ -19,4 +21,6 @@ import java.util.List;
 public interface CardMapper extends EnhanceMapper<Card> {
 
     List<Card> searchList(@Param("query") CardQueryDTO query);
+
+    IPage<CardDTO> searchPage(IPage<CardDTO> iPage, @Param("query") CardQueryDTO query);
 }

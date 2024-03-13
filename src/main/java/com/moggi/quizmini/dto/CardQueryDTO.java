@@ -1,18 +1,16 @@
 package com.moggi.quizmini.dto;
 
+import com.moggi.quizmini.framework.pojo.QueryDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 卡片对象
- * </p>
  *
  * @author wechiwin
  * @since 2024-02-07
@@ -20,7 +18,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class CardQueryDTO implements Serializable {
+public class CardQueryDTO extends QueryDTO {
 
     private static final long serialVersionUID = 1L;
 
@@ -79,7 +77,7 @@ public class CardQueryDTO implements Serializable {
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime modifyTime;
 
-    // =================
+    // ======== blows: not entity field =========
 
     @ApiModelProperty(value = "类别名称")
     private String foName;

@@ -1,5 +1,6 @@
 package com.moggi.quizmini.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
@@ -27,5 +28,7 @@ public interface CardService extends IService<Card> {
     List<CardDTO> submit(List<CardDTO> cardDTOList);
 
     List<CardDTO> searchList(CardQueryDTO query);
+
+    Page<CardDTO> searchPage(CardQueryDTO query);
 
 }

@@ -1,6 +1,8 @@
 package com.moggi.quizmini.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.moggi.quizmini.constant.ForgettingCurveEnum;
 import com.moggi.quizmini.constant.YesOrNoEnum;
@@ -155,5 +157,18 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         List<Card> list = mapper.searchList(query);
         List<CardDTO> cardDTOS = cardConverter.toDtoList(list);
         return cardDTOS;
+    }
+
+    @Override
+    public Page<CardDTO> searchPage(CardQueryDTO query) {
+        Page<CardDTO> page = new Page<>(query.getPage().getCurrent(), query.getPage().getSize());
+        IPage<CardDTO> iPage = page;
+        iPage = mapper.searchPage(iPage, query);
+        if (CollectionUtils.isEmpty(iPage.getRecords())) {
+            return page;
+        }
+        page.setRecords(iPage.getRecords());
+        page.setTotal(iPage.getTotal());
+        return page;
     }
 }

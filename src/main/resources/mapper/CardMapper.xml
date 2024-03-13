@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.moggi.quizmini.mapper.CardMapper">
 
-    <select id="searchList" resultType="com.moggi.quizmini.entity.Card">
-        SELECT ca_pkid,
+    <sql id="search">
+        SELECT
+        ca_pkid,
         fo_pkid,
         grammatical_person,
         verb,
@@ -21,7 +22,27 @@
             <if test="query.foPkid != null and query.foPkid != ''">
                 AND fo_pkid = #{query.foPkid}
             </if>
+            <if test="query.grammaticalPerson != null and query.grammaticalPerson != ''">
+                AND grammatical_person = #{query.grammaticalPerson}
+            </if>
+            <if test="query.verb != null and query.verb != ''">
+                AND verb = #{query.verb}
+            </if>
+            <if test="query.conjugation != null and query.conjugation != ''">
+                AND conjugation like '%'||#{query.conjugation}||'%'
+            </if>
+            <if test="query.egSentence != null and query.egSentence != ''">
+                AND egSentence like '%'||#{query.egSentence}||'%'
+            </if>
         </where>
+    </sql>
+
+    <select id="searchList" resultType="com.moggi.quizmini.entity.Card">
+        <include refid="search"/>
         ORDER BY review_time ASC LIMIT 10
+    </select>
+
+    <select id="searchPage" resultType="com.moggi.quizmini.dto.CardDTO">
+        <include refid="search"/>
     </select>
 </mapper>

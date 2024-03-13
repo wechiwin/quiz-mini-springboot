@@ -1,8 +1,11 @@
 package com.moggi.quizmini.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.moggi.quizmini.dto.FolderQueryDTO;
 import com.moggi.quizmini.entity.Folder;
 import com.moggi.quizmini.service.FolderService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,18 +30,18 @@ public class FolderController {
     private FolderService service;
 
     @PostMapping("searchList")
-    public List<Folder> searchList() {
-        List<Folder> folderList = service.list();
-        folderList = folderList.stream().sorted(Comparator.comparing(Folder::getFoName)).collect(Collectors.toList());
-        // List<Folder> folderList = new ArrayList<>();
-        // for (int i = 0; i < 20; i++) {
-        //     Folder folder = new Folder();
-        //     folder.setFoName("asdf" + i);
-        //     folderList.add(folder);
-        // }
+    public List<Folder> searchList(@RequestBody FolderQueryDTO query) {
+        List<Folder> folderList;
 
-        // model.addAttribute("folderList", folderList);
-        // return "index";
+        if (StringUtils.isNotBlank(query.getFoName())) {
+            folderList = service.list(
+                    new LambdaQueryWrapper<Folder>().like(Folder::getFoName, query.getFoName())
+            );
+        } else {
+            folderList = service.list();
+        }
+
+        folderList = folderList.stream().sorted(Comparator.comparing(Folder::getFoName)).collect(Collectors.toList());
         return folderList;
     }
 
