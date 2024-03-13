@@ -23,44 +23,9 @@
 
     <div class="content">
         <div v-if="showModifyQuestionContent">
-            <h3>
+            <h2>
                 Modifica domande - {{currentFolder}}
-            </h3>
-
-            <div class="search-question">
-                <div class="search-input">
-                    <div>
-                        Personale:
-                        <input type="text" spellcheck="false"
-                               v-model.trim="searchQuestion.grammaticalPerson"
-                               autocomplete="off"
-                               @keyup.enter="getQuestions">
-                    </div>
-                    <div>
-                        verb:
-                        <input type="text" spellcheck="false"
-                               v-model.trim="searchQuestion.verb"
-                               autocomplete="off"
-                               @keyup.enter="getQuestions">
-                    </div>
-                    <div>
-                        Congiungazione:
-                        <input type="text" spellcheck="false"
-                               v-model.trim="searchQuestion.conjugation"
-                               autocomplete="off"
-                               @keyup.enter="getQuestions">
-                    </div>
-                    <div>
-                        Esempi:
-                        <input type="text" spellcheck="false"
-                               v-model.trim="searchQuestion.egSentence"
-                               autocomplete="off"
-                               @keyup.enter="getQuestions">
-                    </div>
-                </div>
-                <button @click="getQuestions">Cerca</button>
-
-            </div>
+            </h2>
 
             <div class="right">
                 <button @click="handleDownloadTemplate">Scarica Template ↓</button>
@@ -69,6 +34,49 @@
                 <button @click="handleAddQuestions">Aggiunge +</button>
                 <button @click="handleGoBackFolder">Torna↩️</button>
             </div>
+
+            <div class="search-question">
+                <div class="search-input">
+                    <div>
+                        <!--                        Personale:-->
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.grammaticalPerson"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions"
+                               placeholder="Personale"
+                        >
+                    </div>
+                    <div>
+                        <!--                        verb:-->
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.verb"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions"
+                               placeholder="Verb"
+                        >
+                    </div>
+                    <div>
+                        <!--                        Congiungazione:-->
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.conjugation"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions"
+                               placeholder="Congiungazione"
+                        >
+                    </div>
+                    <div>
+                        <!--                        Esempi:-->
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.egSentence"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions"
+                               placeholder="Esempi"
+                        >
+                    </div>
+                </div>
+                <button @click="getQuestions">Cerca</button>
+            </div>
+
             <!--        问题 table-->
             <table class="list-table" v-show="showModifyQuestionContent">
                 <thead>
@@ -96,15 +104,33 @@
                 </tbody>
             </table>
 
+            <!--            <div>-->
+            <!--                &lt;!&ndash; 分页控件 &ndash;&gt;-->
+            <!--                <button @click="changePage(-1)" :disabled="page.current === 1">←</button>-->
+            <!--                <span>{{ page.current }} / {{ page.total }}</span>-->
+            <!--                <button @click="changePage(1)" :disabled="page.current === page.total">→</button>-->
+            <!--            </div>-->
+
+            <div>
+                <button @click="changePage(-1)" :disabled="page.current === 1">←</button>
+                <!-- 展示1到5个数字 -->
+                <button v-for="pageNumber in Math.min(5, totalPages)" :key="pageNumber"
+                        @click="goToPage(pageNumber)"
+                        :class="{ 'active': pageNumber === page.current }">
+                    {{ pageNumber }}
+                </button>
+                <button @click="changePage(1)" :disabled="page.current === page.total">→</button>
+            </div>
+
         </div>
 
         <div v-else>
-            <h3>
+            <h2>
                 Modifica Categorie
-            </h3>
+            </h2>
 
             <div class="search-question">
-                <div class="search-input">
+                <div class="folder-input">
                     <div>
                         Categorie:
                         <input type="text" spellcheck="false"
@@ -112,14 +138,16 @@
                                autocomplete="off"
                                @keyup.enter="getList">
                     </div>
+                    <button @click="getList">Cerca</button>
                 </div>
-                <button @click="getList">Cerca</button>
 
-            </div>
-
-            <div class="right">
                 <button @click="handleAddFolder">Aggiunge +</button>
+
             </div>
+
+            <!--            <div class="right">-->
+            <!--                <button @click="handleAddFolder">Aggiunge +</button>-->
+            <!--            </div>-->
 
             <!--        folder table -->
             <table class="list-table">
@@ -141,6 +169,7 @@
                 </tr>
                 </tbody>
             </table>
+
 
         </div>
 
@@ -223,6 +252,11 @@
                 searchList: {
                     foName: ''
                 },
+                page: {
+                    size: 10,
+                    current: 1,
+                    total: 0,
+                }
             }
         },
         mounted() {
@@ -557,7 +591,19 @@
             handleToHome() {
                 window.location.href = "/quiz";
             },
-        }
+        },
+        computed: {
+            // 计算当前显示的数据片段
+            paginatedList() {
+                const startIndex = (this.page.current - 1) * this.page.size;
+                const endIndex = startIndex + this.page.size;
+                return this.list.slice(startIndex, endIndex);
+            },
+            // 计算总页数
+            totalPages() {
+                return Math.ceil(this.list.length / this.page.size);
+            }
+        },
     })
 </script>
 
@@ -667,8 +713,8 @@
     }
 
     .right {
-        text-align: right;
-        width: 60%;
+        text-align: left;
+        width: 50%;
         margin: 0 auto;
     }
 
@@ -731,9 +777,10 @@
     }
 
     .list-table {
-        width: 60%; /* Adjust the width as needed */
+        width: 50%; /* Adjust the width as needed */
         margin: 20px auto; /* Center the table */
         border-collapse: collapse;
+        font-size: 18px;
     }
 
     .list-table th,
@@ -774,15 +821,68 @@
     }
 
     .search-question {
-        width: 60%;
-        margin: 50px auto;
+        width: 50%;
+        margin: 10px auto;
         display: flex;
-        align-items: flex-end;
+        justify-content: space-between;
+        align-items: flex-start;
     }
 
     .search-input {
         display: flex;
     }
+
+    .folder-input {
+        display: flex;
+    }
+
+
+    /*    新方案 */
+    /*    body.dark-mode {*/
+    /*        background-color: #222;*/
+    /*        color: #fff;*/
+    /*    }*/
+
+    /*    .dark-mode .header {*/
+    /*        background-color: #333;*/
+    /*        color: #fff;*/
+    /*    }*/
+
+    /*    .dark-mode .loading-overlay {*/
+    /*        background-color: rgba(0, 0, 0, 0.7);*/
+    /*    }*/
+
+    /*    .dark-mode .content {*/
+    /*        background-color: #333;*/
+    /*    }*/
+
+    /*    .dark-mode table.list-table {*/
+    /*        background-color: #444;*/
+    /*        color: #fff;*/
+    /*    }*/
+
+    /*    .dark-mode .dialog {*/
+    /*        background-color: #444;*/
+    /*        color: #fff;*/
+    /*    }*/
+
+    /*    .dark-mode input,*/
+    /*    .dark-mode button {*/
+    /*        background-color: #555;*/
+    /*        color: #fff;*/
+    /*    }*/
+
+    /*    .dark-mode button.deleteButton {*/
+    /*        background-color: #d9534f; !* Bootstrap's danger color *!*/
+    /*        color: #fff;*/
+    /*    }*/
+
+    /*    .dark-mode button.active {*/
+    /*        background-color: #337ab7; !* Bootstrap's primary color *!*/
+    /*        color: #fff;*/
+    /*    }*/
+
+
 
 </style>
 </html>

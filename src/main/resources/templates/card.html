@@ -100,9 +100,9 @@
 
     <div v-else>
         <h2 class="coral-color"> Tutte finite! 👍😊👍 </h2>
-        <button @click="handleGetMoreQuestions" v-if="showGetMoreQuestionButton">
-            Più domande! 💪
-        </button>
+        <!--        <button @click="handleGetMoreQuestions" v-if="showGetMoreQuestionButton">-->
+        <!--            Più domande! 💪-->
+        <!--        </button>-->
         <h2 class="coral-color" v-else>Torna a Home entro 3 secondi...</h2>
         <button @click="handleToHome">
             👉HomePage
@@ -171,7 +171,6 @@
                 this.showCorrectAnswer = false
                 this.currentQuestionIndex = 1
                 this.getQuestions(this.foPkid)
-
             },
             handlePasteButtons(content) {
                 navigator.clipboard.writeText(content)
@@ -184,7 +183,6 @@
                                 inputRef.focus();
                             }
                         });
-
                     })
                     .catch(err => {
                         console.error('Unable to copy', err);
@@ -227,7 +225,8 @@
                             console.log('第二轮错题', JSON.stringify(this.cardList))
                             console.log('第二轮错题', this.cardList)
                             if (this.cardList.length === 0) {
-                                this.isCompleted = true
+                                // this.isCompleted = true
+                                this.handleGetMoreQuestions()
                             } else {
                                 this.cardList.forEach(question => {
                                     question.userAnswer = ''
@@ -264,12 +263,17 @@
                     success: (result) => {
                         if (result.status === 200) {
                             this.cardList = result.data
-                            this.currentQuestionIndex = 1
-                            console.log('submit错题', this.cardList)
-                            this.isFirstTime = false
-                            this.showCorrectAnswer = false
-                            this.total = this.cardList.length
-                            this.handleFirstFocus()
+                            if (this.cardList.length === 0) {
+                                this.handleGetMoreQuestions()
+                            } else {
+                                this.currentQuestionIndex = 1
+                                console.log('submit错题', this.cardList)
+                                this.isFirstTime = false
+                                this.showCorrectAnswer = false
+                                this.total = this.cardList.length
+                                this.handleFirstFocus()
+                            }
+
                         }
                     },
                     error: (error) => {
@@ -364,7 +368,8 @@
                             if (result.data.length === 0) {
                                 // 问题已经答完了
                                 console.log('没有更多问题了!')
-                                this.showGetMoreQuestionButton = false
+                                // this.showGetMoreQuestionButton = false
+                                this.isCompleted = true
                                 setTimeout(() => {
                                     window.location.href = "/quiz";
                                 }, 3000);
