@@ -14,6 +14,7 @@
 <div id="app">
     <div class="header">
         <a th:href="@{/}" class="header-text">Studiamo!</a>
+        <button @click="toggleDarkMode" class="fix-button-right">☀️/🌙</button>
     </div>
 
     <div v-if="loading" class="loading-overlay">
@@ -25,6 +26,42 @@
             <h3>
                 Modifica domande - {{currentFolder}}
             </h3>
+
+            <div class="search-question">
+                <div class="search-input">
+                    <div>
+                        Personale:
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.grammaticalPerson"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions">
+                    </div>
+                    <div>
+                        verb:
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.verb"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions">
+                    </div>
+                    <div>
+                        Congiungazione:
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.conjugation"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions">
+                    </div>
+                    <div>
+                        Esempi:
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchQuestion.egSentence"
+                               autocomplete="off"
+                               @keyup.enter="getQuestions">
+                    </div>
+                </div>
+                <button @click="getQuestions">Cerca</button>
+
+            </div>
+
             <div class="right">
                 <button @click="handleDownloadTemplate">Scarica Template ↓</button>
                 <input type="file" ref="fileInput" style="display: none" @change="handleFileChange">
@@ -66,6 +103,20 @@
                 Modifica Categorie
             </h3>
 
+            <div class="search-question">
+                <div class="search-input">
+                    <div>
+                        Categorie:
+                        <input type="text" spellcheck="false"
+                               v-model.trim="searchList.foName"
+                               autocomplete="off"
+                               @keyup.enter="getList">
+                    </div>
+                </div>
+                <button @click="getList">Cerca</button>
+
+            </div>
+
             <div class="right">
                 <button @click="handleAddFolder">Aggiunge +</button>
             </div>
@@ -98,16 +149,16 @@
             <h3>Modifica Categorie</h3>
             <input type="text" v-model="newCategoryName"
                    style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
-            <button id="promptOkBtn" @click="handleClickOk(currentIndex)">OK</button>
-            <button id="promptCancelBtn" @click="handleClickCancel">Annulla</button>
+            <button @click="handleClickOk(currentIndex)">OK</button>
+            <button @click="handleClickCancel">Annulla</button>
         </div>
 
         <div class="dialog" v-show="showAddDialog">
             <h3>Add Categorie</h3>
             <input type="text" v-model="newCategoryName"
                    style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
-            <button id="promptOkBtn" @click="handleClickAdd">Add</button>
-            <button id="promptCancelBtn" @click="handleClickCancelAdd">Annulla</button>
+            <button @click="handleClickAdd">Add</button>
+            <button @click="handleClickCancelAdd">Annulla</button>
         </div>
 
         <div class="dialog" v-show="showQuestionDialog">
@@ -163,14 +214,36 @@
                 },
                 isUpdateQuestion: false,
                 currentFolder: '',
-
+                searchQuestion: {
+                    grammaticalPerson: "",
+                    verb: "",
+                    conjugation: "",
+                    egSentence: "",
+                },
+                searchList: {
+                    foName: ''
+                },
             }
-
         },
         mounted() {
+            this.handleDark()
             this.getList();
         },
         methods: {
+            toggleDarkMode() {
+                const currentMode = localStorage.getItem('mode') || 'dark';
+                const newMode = currentMode === 'dark' ? 'light' : 'dark';
+
+                document.documentElement.classList.toggle('dark-mode');
+
+                localStorage.setItem('mode', newMode);
+            },
+            handleDark() {
+                let mode = localStorage.getItem('mode')
+                if (mode === 'dark') {
+                    document.documentElement.classList.toggle('dark-mode');
+                }
+            },
             handleFileChange(event) {
                 const file = event.target.files[0];
 
@@ -257,7 +330,8 @@
             },
             getQuestions() {
                 var param = {
-                    "foPkid": this.addQuestion.foPkid
+                    "foPkid": this.addQuestion.foPkid,
+                    ...this.searchQuestion
                 }
                 var _this = this
                 $.ajax({
@@ -501,6 +575,10 @@
         padding: 0;
     }
 
+    .dark-mode body {
+        background-color: #52596e;
+    }
+
     .content {
         margin: 0 auto;
         text-align: center;
@@ -537,7 +615,7 @@
         border: 1px solid #e1e8ed;
         border-radius: 5px;
         font-size: 16px;
-        width: 26vw;
+        width: 10vw;
     }
 
     button {
@@ -556,8 +634,17 @@
         background-color: #0e81d4;
     }
 
+    .dark-mode button:hover {
+        color: #1da1f2;
+    }
+
     button:disabled {
         background-color: darkgrey;
+        cursor: not-allowed;
+    }
+
+    .dark-mode button:disabled {
+        background-color: #ebecee;
         cursor: not-allowed;
     }
 
@@ -565,8 +652,18 @@
         background-color: firebrick;
     }
 
+    /*.dark-mode .deleteButton {*/
+    /*    background-color: darkmagenta;*/
+    /*    color: white;*/
+    /*}*/
+
     .deleteButton:hover {
         background-color: darkgray;
+    }
+
+    .dark-mode .deleteButton:hover {
+        background-color: crimson;
+        color: #FFFFFF;
     }
 
     .right {
@@ -622,6 +719,10 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
+    .dark-mode .dialog {
+        background-color: #52596e;
+    }
+
     .input-question {
         display: flex;
         flex-direction: row;
@@ -646,77 +747,41 @@
         background-color: #f2f2f2;
     }
 
+    .dark-mode .list-table th {
+        background-color: #164e63;
+        color: #bae6fd;
+    }
 
-    /*移动端*/
-    @media screen and (max-width: 750px) {
-        .list-content {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            flex-direction: column;
-            align-items: center;
-            align-content: center;
-        }
 
-        .list-item {
-            display: list-item;
-            width: 200px;
-            line-height: 40px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #e1e8ed;
-            border-radius: 5px;
-            background-color: #ffffff;
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #000000;
-        }
-
-        .list-item:hover {
-            background-color: #f5f8fa;
-        }
-
+    .fix-button-right {
+        position: fixed;
+        right: 0;
 
     }
 
-    /*PC端*/
-    @media screen and (min-width: 751px) {
-        .list-content {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            flex-direction: column;
-            height: 86vh;
-            align-items: center;
-            align-content: center;
-        }
+    .dark-mode {
+        background-color: #52596e; /* Choose a dark background color */
+        color: #ced6e1; /* Choose a light text color */
+    }
 
-        .list-item {
-            display: list-item;
-            width: 200px;
-            line-height: 40px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #e1e8ed;
-            border-radius: 5px;
-            background-color: #ffffff;
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #000000;
-        }
+    .dark-mode button {
+        background-color: #223c5b; /* Choose a dark color for the button */
+        color: #ced6e1; /* Choose a light text color for the button */
+    }
 
-        .list-item:hover {
-            background-color: #f5f8fa;
-        }
+    .dark-mode p {
+        color: #ced6e1; /* Choose a light text color for the button */
+    }
 
+    .search-question {
+        width: 60%;
+        margin: 50px auto;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .search-input {
+        display: flex;
     }
 
 </style>

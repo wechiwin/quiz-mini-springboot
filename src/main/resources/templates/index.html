@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" class="light-mode">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -37,12 +37,19 @@
 
 <script type="text/javascript">
     function toggleDarkMode() {
+        const currentMode = localStorage.getItem('mode') || 'dark';
+        const newMode = currentMode === 'dark' ? 'light' : 'dark';
+
         document.documentElement.classList.toggle('dark-mode');
+
+        localStorage.setItem('mode', newMode);
     }
 
     var getList = function () {
         var _this = this;
-        var param = _this.searchList;
+        var param = {
+            foName: ""
+        };
         $.ajax({
             type: "POST",
             url: "/quiz/folder/searchList",
@@ -66,9 +73,16 @@
             }
         },
         mounted() {
+            this.handleDark()
             this.getList();
         },
         methods: {
+            handleDark() {
+                let mode = localStorage.getItem('mode')
+                if (mode === 'dark') {
+                    document.documentElement.classList.toggle('dark-mode');
+                }
+            },
             handleToManage() {
                 window.location.href = "/quiz/manage";
             },
@@ -92,8 +106,6 @@
                         // Handle errors
                         console.error(error);
                     });
-
-
             },
         }
     })
@@ -101,8 +113,6 @@
 </body>
 
 <style>
-
-
     body {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

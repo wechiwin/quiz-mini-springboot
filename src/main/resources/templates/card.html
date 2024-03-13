@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" class="light-mode">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -140,13 +140,19 @@
             }
         },
         mounted() {
-
+            this.handleDark()
             if (!this.wrongQuestions) {
                 this.getPkid()
             }
 
         },
         methods: {
+            handleDark() {
+                let mode = localStorage.getItem('mode')
+                if (mode === 'dark') {
+                    document.documentElement.classList.toggle('dark-mode');
+                }
+            },
             handleFirstFocus() {
                 this.$nextTick(() => {
                     console.log('this.$refs:', this.$refs);
@@ -388,7 +394,12 @@
 
 <script th:inline="javascript">
     function toggleDarkMode() {
+        const currentMode = localStorage.getItem('mode') || 'dark';
+        const newMode = currentMode === 'dark' ? 'light' : 'dark';
+
         document.documentElement.classList.toggle('dark-mode');
+
+        localStorage.setItem('mode', newMode);
     }
 
     /*<![CDATA[*/
