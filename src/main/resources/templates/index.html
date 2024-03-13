@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="light-mode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -18,7 +18,8 @@
 <div id="app">
     <div class="header">
         <a th:href="@{/}" class="header-text">Studiamo!</a>
-        <button class="fix-button-right" @click="handleToManage">Manage</button>
+        <button @click="handleToManage" class="fix-button-left">Manage</button>
+        <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
     </div>
 
     <div id="folderList" class="list-content">
@@ -35,6 +36,10 @@
 </div>
 
 <script type="text/javascript">
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark-mode');
+    }
+
     var getList = function () {
         var _this = this;
         var param = _this.searchList;
@@ -110,11 +115,9 @@
         padding: 0;
     }
 
-    code {
-        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-        monospace;
+    .dark-mode body {
+        background-color: #52596e;
     }
-
 
     .header {
         padding: 10px 20px;
@@ -160,6 +163,11 @@
         right: 0;
     }
 
+    .fix-button-left {
+        position: fixed;
+        left: 0;
+    }
+
 
     /*移动端*/
     @media screen and (max-width: 750px) {
@@ -190,10 +198,18 @@
             color: #000000;
         }
 
+        .dark-mode .list-item {
+            color: #ced6e1;
+            background-color: seashell
+        }
+
         .list-item:hover {
             background-color: #f5f8fa;
         }
 
+        .dark-mode .list-item:hover {
+            color: paleturquoise;
+        }
 
     }
 
@@ -227,11 +243,37 @@
             color: #000000;
         }
 
+
+        .dark-mode .list-item {
+            color: #52596e;
+            background-color: #e2e3ef;
+        }
+
         .list-item:hover {
             background-color: #f5f8fa;
         }
 
+        .dark-mode .list-item:hover {
+            color: #1da1f2;
+        }
+
+
     }
+
+    .dark-mode {
+        background-color: #52596e; /* Choose a dark background color */
+        color: #ced6e1; /* Choose a light text color */
+    }
+
+    .dark-mode button {
+        background-color: #223c5b; /* Choose a dark color for the button */
+        color: #ced6e1; /* Choose a light text color for the button */
+    }
+
+    .dark-mode p {
+        color: #ced6e1; /* Choose a light text color for the button */
+    }
+
 
 </style>
 
