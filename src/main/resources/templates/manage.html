@@ -112,16 +112,16 @@
             <!--            </div>-->
 
             <div>
+                Totale: {{page.total}}
                 <button @click="changePage(-1)" :disabled="page.current === 1">←</button>
                 <!-- 展示1到5个数字 -->
-                <button v-for="pageNumber in Math.min(5, totalPages)" :key="pageNumber"
+                <button v-for="pageNumber in Math.min(5, page.pages)" :key="pageNumber"
                         @click="goToPage(pageNumber)"
                         :class="{ 'active': pageNumber === page.current }">
                     {{ pageNumber }}
                 </button>
                 <button @click="changePage(1)" :disabled="page.current === page.total">→</button>
             </div>
-
         </div>
 
         <div v-else>
@@ -256,6 +256,7 @@
                     size: 10,
                     current: 1,
                     total: 0,
+                    pages: 0,
                 }
             }
         },
@@ -365,19 +366,25 @@
             getQuestions() {
                 var param = {
                     "foPkid": this.addQuestion.foPkid,
-                    ...this.searchQuestion
+                    ...this.searchQuestion,
+                    page: {
+                        current: this.page.current,
+                        size: this.page.size,
+                    }
                 }
                 var _this = this
                 $.ajax({
                     type: "POST",
-                    url: "/quiz/card/searchList",
+                    url: "/quiz/card/searchPage",
                     data: JSON.stringify(param),
                     dataType: "json",
                     contentType: "application/json",
                     success: function (result) {
                         if (result.status == 200) {
-                            // console.log(result)
-                            _this.questionList = result.data
+                            console.log(result)
+                            _this.questionList = result.data.records
+                            _this.page.total = result.data.total
+                            _this.page.pages = result.pages
                         }
                     }
                 });
@@ -448,6 +455,11 @@
             handleGoBackFolder() {
                 this.showModifyQuestionContent = false
                 this.currentFolder = ''
+                this.searchQuestion.grammaticalPerson = ''
+                this.searchQuestion.verb = ''
+                this.searchQuestion.conjugation = ''
+                this.searchQuestion.egSentence = ''
+                this.searchList.foName = ''
             },
 
             handleClickCancelAdd() {
@@ -646,7 +658,7 @@
         text-decoration: underline;
         text-align: center;
         display: block;
-        font-size: 2em;
+        font-size: 2.2em;
         margin-block-start: 0.67em;
         margin-block-end: 0.67em;
         margin-inline-start: 0px;
@@ -881,7 +893,6 @@
     /*        background-color: #337ab7; !* Bootstrap's primary color *!*/
     /*        color: #fff;*/
     /*    }*/
-
 
 
 </style>
