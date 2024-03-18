@@ -113,6 +113,20 @@
 </body>
 
 <style>
+    /* Dracula Theme Colors */
+    :root {
+        --dracula-bg: #282a36;
+        --dracula-fg: #f8f8f2;
+        --dracula-comment: #6272a4;
+        --dracula-cyan: #8be9fd;
+        --dracula-green: #50fa7b;
+        --dracula-orange: #ffb86c;
+        --dracula-pink: #ff79c6;
+        --dracula-purple: #bd93f9;
+        --dracula-red: #ff5555;
+        --dracula-yellow: #f1fa8c;
+    }
+
     body {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -123,10 +137,6 @@
         font-family: 'Arial', sans-serif;
         background-color: #f5f8fa;
         padding: 0;
-    }
-
-    .dark-mode body {
-        background-color: #52596e;
     }
 
     .header {
@@ -208,19 +218,41 @@
             color: #000000;
         }
 
-        .dark-mode .list-item {
-            color: #ced6e1;
-            background-color: seashell
+        .list-content {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
         }
 
-        .list-item:hover {
-            background-color: #f5f8fa;
+        .dark-mode .list-item {
+            display: list-item;
+            width: 200px;
+            line-height: 40px;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #6272a4; /* Dracula theme border color */
+            border-radius: 5px;
+            background-color: #282a36; /* Dracula theme background color */
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #f8f8f2; /* Dracula theme text color */
         }
 
         .dark-mode .list-item:hover {
-            color: paleturquoise;
+            background-color: #44475a; /* Dracula theme hover background color */
         }
 
+        .dark-mode .list-item:focus {
+            outline: none;
+            border: 1px solid #bd93f9; /* Dracula theme focus border color */
+        }
     }
 
     /*PC端*/
@@ -256,34 +288,65 @@
 
 
         .dark-mode .list-item {
-            color: #52596e;
-            background-color: #e2e3ef;
-        }
-
-        .list-item:hover {
-            background-color: #f5f8fa;
+            display: list-item;
+            width: 200px;
+            line-height: 40px;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #6272a4; /* Dracula theme border color */
+            border-radius: 5px;
+            background-color: #282a36; /* Dracula theme background color */
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #f8f8f2; /* Dracula theme text color */
         }
 
         .dark-mode .list-item:hover {
-            color: #1da1f2;
+            background-color: #44475a; /* Dracula theme hover background color */
         }
 
+        .dark-mode .list-item:focus {
+            outline: none;
+            border: 1px solid #bd93f9; /* Dracula theme focus border color */
+        }
 
     }
 
-    .dark-mode {
-        background-color: #52596e; /* Choose a dark background color */
-        color: #ced6e1; /* Choose a light text color */
+    /* Dark Mode */
+    .dark-mode body {
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
     }
 
-    .dark-mode button {
-        background-color: #223c5b; /* Choose a dark color for the button */
-        color: #ced6e1; /* Choose a light text color for the button */
+    .dark-mode button,
+    input,
+    select {
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
+        border: 1px solid var(--dracula-purple);
+    }
+
+    .dark-mode button:hover,
+    input:hover,
+    select:hover {
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
+        border: 1px solid var(--dracula-pink);
+    }
+
+    .dark-mode button:focus,
+    input:focus,
+    select:focus {
+        outline: none;
+        border: 1px solid var(--dracula-cyan);
     }
 
     .dark-mode p {
-        color: #ced6e1; /* Choose a light text color for the button */
+        color: var(--dracula-fg);
     }
+
 
 
 </style>
