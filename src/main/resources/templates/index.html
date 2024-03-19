@@ -79,7 +79,9 @@
         methods: {
             handleDark() {
                 let mode = localStorage.getItem('mode')
-                if (mode === 'dark') {
+                if (!mode) {
+                    localStorage.setItem('mode', 'light');
+                } else if (mode === 'dark') {
                     document.documentElement.classList.toggle('dark-mode');
                 }
             },
@@ -346,7 +348,6 @@
     .dark-mode p {
         color: var(--dracula-fg);
     }
-
 
 
 </style>
