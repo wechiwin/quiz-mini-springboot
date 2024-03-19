@@ -21,7 +21,7 @@ public interface CardService extends IService<Card> {
 
     // boolean upload(byte[] bytes);
 
-    List<Card> listByFoPkid(String foPkid);
+    List<Card> listByFoPkid(Integer foPkid);
 
     boolean upload(List<CardExcelDTO> excelDTOList);
 

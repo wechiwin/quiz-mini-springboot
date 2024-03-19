@@ -85,7 +85,10 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
                 BeanUtils.copyProperties(excelDTO, card);
                 card.setFoPkid(foPkid);
                 card.setReviewTime(LocalDate.now().plusDays(1));
+                card.setHitTimes(0);
                 card.setIfDone(YesOrNoEnum.Yes.getVal());
+                card.setVerb(card.getVerb().trim());
+                card.setConjugation(card.getConjugation().trim());
                 cards.add(card);
             }
             if (CollectionUtils.isNotEmpty(cards)) {
@@ -96,7 +99,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     }
 
     @Override
-    public List<Card> listByFoPkid(String foPkid) {
+    public List<Card> listByFoPkid(Integer foPkid) {
         LambdaQueryWrapper<Card> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Card::getFoPkid, foPkid);
         wrapper.orderByAsc(Card::getReviewTime);

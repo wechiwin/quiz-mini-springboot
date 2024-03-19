@@ -3,8 +3,11 @@ package com.moggi.quizmini.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.moggi.quizmini.dto.FolderQueryDTO;
+import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.entity.Folder;
+import com.moggi.quizmini.service.CardService;
 import com.moggi.quizmini.service.FolderService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,8 @@ public class FolderController {
 
     @Autowired
     private FolderService service;
+    @Autowired
+    private CardService cardService;
 
     @PostMapping("searchList")
     public List<Folder> searchList(@RequestBody FolderQueryDTO query) {
@@ -59,6 +64,11 @@ public class FolderController {
 
     @PostMapping("delete")
     public boolean delete(@RequestBody Folder folder) {
+        // 查询相关cardList
+        List<Card> cards = cardService.listByFoPkid(folder.getFoPkid());
+        if (CollectionUtils.isNotEmpty(cards)) {
+            throw new RuntimeException("存在相关单词，无法删除");
+        }
         boolean delete = service.removeById(folder);
         return delete;
     }
