@@ -33,6 +33,7 @@
                 <button @click="handleUploadTemplate" :disabled="loading">Carica Template ↑</button>
                 <button @click="handleAddQuestions">Aggiunge +</button>
                 <button @click="handleGoBackFolder">Torna↩️</button>
+                <button @click="handleRefreshQuestions">Refresh</button>
             </div>
 
             <div class="search-question">
@@ -281,6 +282,10 @@
             this.getList();
         },
         methods: {
+            handleRefreshQuestions() {
+                this.loading = true
+                this.getQuestions()
+            },
             handleChangePageSize() {
                 this.page.current = 1
                 this.page.size = Number(this.page.size)
@@ -422,6 +427,7 @@
                     contentType: "application/json",
                     success: function (result) {
                         if (result.status == 200) {
+                            _this.loading = false
                             console.log(result)
                             _this.questionList = result.data.records
                             _this.page.total = result.data.total
@@ -429,6 +435,7 @@
                         }
                     },
                     error: (error) => {
+                        _this.loading = false
                         alert(error.responseJSON.message)
                         console.log('Error:', error);
                     }
@@ -863,6 +870,10 @@
         justify-content: center;
         align-items: center;
         z-index: 9999;
+    }
+
+    .dark-mode .loading-overlay {
+        background: var(--dracula-bg);
     }
 
     .loading-spinner {
