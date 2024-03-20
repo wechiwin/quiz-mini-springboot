@@ -386,7 +386,13 @@
                                 _this.itemDeleting = false;
 
                             }
+                        },
+                        error: (error) => {
+                            _this.itemDeleting = false;
+                            alert(error.message)
+                            console.error('Error deleting:', error);
                         }
+
                     });
                 }
 
@@ -421,6 +427,10 @@
                             _this.page.total = result.data.total
                             _this.page.pages = result.data.pages
                         }
+                    },
+                    error: (error) => {
+                        alert(error.responseJSON.message)
+                        console.log('Error:', error);
                     }
                 });
             },
@@ -448,6 +458,10 @@
                                     _this.showQuestionDialog = false
                                     _this.isUpdateQuestion = false
                                 }
+                            },
+                            error: (error) => {
+                                alert(error.responseJSON.message)
+                                console.log('Error:', error);
                             }
                         });
                     } else {
@@ -464,6 +478,10 @@
                                     _this.getQuestions()
                                     _this.showQuestionDialog = false
                                 }
+                            },
+                            error: (error) => {
+                                alert(error.responseJSON.message)
+                                console.log('Error:', error);
                             }
                         });
                     }
@@ -523,8 +541,11 @@
                                 // console.log(result)
                                 // alert('Fatto!')
                                 _this.getList();
-
                             }
+                        },
+                        error: (error) => {
+                            alert(error.responseJSON.message)
+                            console.log('Error:', error);
                         }
                     });
 
@@ -556,6 +577,10 @@
                                     console.log('handleClickOk--result', result)
                                     // alert('Fatto!')
                                 }
+                            },
+                            error: (error) => {
+                                alert(error.responseJSON.message)
+                                console.log('Error:', error);
                             }
                         });
                     }
@@ -589,6 +614,11 @@
                             _this.itemDeleting = false;
                             // alert('Fatto!')
                         }
+                    },
+                    error: (error) => {
+                        _this.itemDeleting = false;
+                        alert(error.responseJSON.message)
+                        console.log('Error:', error);
                     }
                 });
             },
@@ -611,6 +641,11 @@
                                 _this.itemDeleting = false;
                                 // alert('Fatto!')
                             }
+                        },
+                        error: (error) => {
+                            _this.itemDeleting = false;
+                            alert(error.responseJSON.message)
+                            console.log('Error deleting:', error);
                         }
                     });
                 }
@@ -635,6 +670,10 @@
                             // console.log(result)
                             _this.list = result.data;
                         }
+                    },
+                    error: (error) => {
+                        alert(error.responseJSON.message)
+                        console.log('Error:', error);
                     }
                 });
             },
