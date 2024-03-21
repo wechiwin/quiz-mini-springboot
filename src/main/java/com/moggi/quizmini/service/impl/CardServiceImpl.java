@@ -86,7 +86,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
                 card.setFoPkid(foPkid);
                 card.setReviewTime(LocalDate.now().plusDays(1));
                 card.setHitTimes(0);
-                card.setIfDone(YesOrNoEnum.Yes.getVal());
+                card.setIfDone(YesOrNoEnum.No.getVal());
                 card.setVerb(card.getVerb().trim());
                 card.setConjugation(card.getConjugation().trim());
                 cards.add(card);
