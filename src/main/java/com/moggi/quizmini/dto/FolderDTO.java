@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -34,5 +35,7 @@ public class FolderDTO implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String modifyTime;
 
-
+    // ===== non entity fields =====
+    @ApiModelProperty(value = "可学习cards集合是否为空")
+    private int ifEmptyCards;
 }
