@@ -68,30 +68,8 @@
             </div>
 
 
-            <!--            <div>-->
-            <!--                &lt;!&ndash; 在 th:attr 中设置动态内容 &ndash;&gt;-->
-            <!--                &lt;!&ndash;                <button th:attr="data-content='è'" th:onclick="handlePaste(this)" class="copyButton">è</button>&ndash;&gt;-->
-            <!--                &lt;!&ndash;                <button th:attr="data-content='ò'" th:onclick="handlePaste(this)" class="copyButton">ò</button>&ndash;&gt;-->
-            <!--                &lt;!&ndash;                <button th:attr="data-content='à'" th:onclick="handlePaste(this)" class="copyButton">à</button>&ndash;&gt;-->
-            <!--                &lt;!&ndash;                <button th:attr="data-content='ì'" th:onclick="handlePaste(this)" class="copyButton">ì</button>&ndash;&gt;-->
-            <!--                &lt;!&ndash;                <button th:attr="data-content='ù'" th:onclick="handlePaste(this)" class="copyButton">ù</button>&ndash;&gt;-->
-
-            <!--                <button v-for="button in buttons" :key="button.content" @click="handlePasteButtons(button.content)"-->
-            <!--                        class="copyButton">-->
-            <!--                    {{ button.content }}-->
-            <!--                </button>-->
-
-            <!--            </div>-->
-
-            <!--            <hr/>-->
-
             <div>
                 <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
-                <!--                <p class="score">Punti: {{score}} 🎁 </p>-->
-                <!--                <div>-->
-                <!--                    <button @click="handlePrevNext('prev')">←</button>-->
-                <!--                    <button @click="handlePrevNext('next')">→</button>-->
-                <!--                </div>-->
             </div>
 
         </div>
@@ -100,9 +78,6 @@
 
     <div v-else>
         <h2 class="coral-color"> Tutte finite! 👍😊👍 </h2>
-        <!--        <button @click="handleGetMoreQuestions" v-if="showGetMoreQuestionButton">-->
-        <!--            Più domande! 💪-->
-        <!--        </button>-->
         <h2 class="coral-color" v-else>Torna a Home entro 3 secondi...</h2>
         <button @click="handleToHome">
             👉HomePage
@@ -121,19 +96,11 @@
                 score: 0,
                 currentQuestionIndex: 1,
                 cardList: [],
-                // cardList: data - cardList,
                 total: 0,
                 isCompleted: false,
                 userAnswer: '',
                 wrongQuestions: false,
                 foPkid: '',
-                // buttons: [
-                //     {content: 'è'},
-                //     {content: 'ò'},
-                //     {content: 'à'},
-                //     {content: 'ì'},
-                //     {content: 'ù'}
-                // ],
                 isFirstTime: true,
                 showGetMoreQuestionButton: true,
                 isPhrase: false,
@@ -144,7 +111,6 @@
             if (!this.wrongQuestions) {
                 this.getPkid()
             }
-
         },
         methods: {
             handleDark() {
@@ -172,24 +138,6 @@
                 this.currentQuestionIndex = 1
                 this.getQuestions(this.foPkid)
             },
-            handlePasteButtons(content) {
-                navigator.clipboard.writeText(content)
-                    .then(() => {
-                        // Update input with copied content
-                        this.$nextTick(() => {
-                            this.cardList[this.currentQuestionIndex - 1].userAnswer += content;
-                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
-                            if (inputRef) {
-                                inputRef.focus();
-                            }
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Unable to copy', err);
-                        // Handle error if necessary
-                    });
-            },
-
             handleToHome() {
                 window.location.href = "/quiz";
             },
@@ -282,58 +230,6 @@
                     }
                 });
             },
-
-            handlePrevNext(flag) {
-                // 没有做过
-                // this.userAnswer = ''
-                // this.questionDone = false
-                // this.ifCorrect = false
-                this.showCorrectAnswer = false
-
-
-                if (flag === 'prev') {
-                    if (this.currentQuestionIndex === 1) {
-                        this.currentQuestionIndex = 1
-                    } else {
-                        this.currentQuestionIndex -= 1
-                    }
-
-
-                    this.$nextTick(() => {
-                        const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
-                        if (inputRef) {
-                            inputRef.focus();
-                        }
-                    });
-                } else {
-                    // 下一题
-                    if (this.currentQuestionIndex === this.total) {
-                        this.currentQuestionIndex = this.total
-                        this.isCompleted = true
-                        //     提交答案
-                        alert('submit!')
-                    } else {
-                        this.currentQuestionIndex += 1
-
-                        this.$nextTick(() => {
-                            const inputRef = this.$refs[`inputRef${this.currentQuestionIndex}`][0];
-                            if (inputRef) {
-                                inputRef.focus();
-                            }
-                        });
-                    }
-                }
-
-                if (this.cardList[currentQuestionIndex - 1].questionDone) {
-                    this.showCorrectAnswer = true
-                } else {
-                    this.showCorrectAnswer = false
-                    this.userAnswer = ''
-                    this.questionDone = false
-                    this.ifCorrect = 0
-                }
-
-            },
             getPkid() {
                 // Get the current URL
                 var currentUrl = window.location.href;
@@ -409,42 +305,10 @@
         localStorage.setItem('mode', newMode);
     }
 
-    /*<![CDATA[*/
-    function handlePaste(button) {
-        // 获取按钮上的动态内容
-        var dynamicContent = button.getAttribute('data-content');
-
-        // 创建一个临时的textarea元素
-        var tempTextarea = document.createElement("textarea");
-        // 设置textarea的值为要复制的内容
-        tempTextarea.value = dynamicContent;
-        // 设置textarea的值为动态内容
-        tempTextarea.value = dynamicContent;
-        // 将textarea添加到DOM中
-        document.body.appendChild(tempTextarea);
-        // 选择textarea的内容
-        tempTextarea.select();
-        // 执行复制操作
-        document.execCommand('copy');
-        // 从DOM中移除textarea
-        document.body.removeChild(tempTextarea);
-
-        // 将复制的内容粘贴到input框中
-        document.getElementById('inputRef' + this.currentQuestionIndex).value += dynamicContent;
-
-        // 这里可以添加其他处理逻辑，例如提示用户复制成功
-        // alert('Copied: ' + dynamicContent);
-    }
-
-
-    /*]]>*/
 </script>
 
 </body>
 
-<!--<script th:src="@{/static/js/axios.min.js}"></script>-->
-<!--<script th:src="@{/static/js/common.js}"></script>-->
-<!--<script th:src="@{/static/js/vue@2.6.20.min.js}"></script>-->
 
 <style>
     /* Dracula Theme Colors */
@@ -478,11 +342,6 @@
         color: var(--dracula-fg);
     }
 
-    code {
-        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-        monospace;
-    }
-
     h2 {
         font-size: 2.4em;
     }
@@ -514,45 +373,16 @@
         font-weight: bold;
     }
 
-    @keyframes countdown {
-        0% {
-            /*transform: scale(1);*/
-            opacity: 1;
-        }
-        33% {
-            /*transform: scale(0.8);*/
-            opacity: 0.8;
-        }
-        66% {
-            /*transform: scale(0.6);*/
-            opacity: 0.6;
-        }
-        100% {
-            /*transform: scale(0);*/
-            opacity: 0;
-        }
-    }
-
-    .countdown {
-        display: inline-block;
-        font-size: 4em;
-        color: coral;
-        animation: countdown 3s linear forwards;
-    }
-
-
     p {
         color: #66757f;
         margin-top: 10px;
         font-size: 1.4em;
     }
 
-
     .giusta {
         color: darkcyan;
         font-weight: bold;
     }
-
 
     button {
         padding: 10px 20px;
@@ -591,17 +421,6 @@
         right: 0;
     }
 
-    /*.copyButton {*/
-    /*    color: #1da1f2;*/
-    /*    background: azure;*/
-    /*}*/
-
-    /*.copyButton:hover {*/
-    /*    color: white;*/
-    /*    !*font-weight: bold;*!*/
-    /*    !*background: coral;*!*/
-    /*}*/
-
     input {
         padding: 8px;
         margin: 5px;
@@ -620,14 +439,6 @@
         font-family: 'Arial', sans-serif;
         width: 400px;
         height: 100px;
-    }
-
-    .hideQuestion {
-        display: none;
-    }
-
-    .showQuestion {
-        display: block;
     }
 
     .coral-color {
@@ -704,7 +515,6 @@
         color: var(--dracula-purple);
         font-weight: bold;
     }
-
 
     .fix-button-right {
         position: fixed;
