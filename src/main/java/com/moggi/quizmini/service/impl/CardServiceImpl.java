@@ -174,4 +174,11 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         page.setTotal(iPage.getTotal());
         return page;
     }
+
+    @Override
+    public List<CardDTO> listToStudy(CardQueryDTO query) {
+        Page<CardDTO> page = this.searchPage(query);
+        List<CardDTO> records = page.getRecords();
+        return records;
+    }
 }

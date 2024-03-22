@@ -90,7 +90,7 @@ public class MyWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
-                .enable(true)
+                .enable(false)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.moggi.quizmini.controller"))
                 .paths(PathSelectors.any())

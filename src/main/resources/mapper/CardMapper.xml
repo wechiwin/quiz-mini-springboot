@@ -40,10 +40,10 @@
 
     <select id="searchList" resultType="com.moggi.quizmini.entity.Card">
         <include refid="search"/>
-        ORDER BY review_time ASC LIMIT 10
     </select>
 
     <select id="searchPage" resultType="com.moggi.quizmini.dto.CardDTO">
         <include refid="search"/>
+        ORDER BY review_time
     </select>
 </mapper>

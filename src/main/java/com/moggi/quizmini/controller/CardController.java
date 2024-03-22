@@ -9,7 +9,6 @@ import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.dto.CardQueryDTO;
 import com.moggi.quizmini.entity.Card;
-import com.moggi.quizmini.entity.Folder;
 import com.moggi.quizmini.excel.ExcelExportHandler;
 import com.moggi.quizmini.excel.ExcelReadListener;
 import com.moggi.quizmini.service.CardService;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -58,14 +56,6 @@ public class CardController {
         excelExportHandler.downloadTemplate(response, "template", CardExcelDTO.class);
     }
 
-    @GetMapping("/listByFoPkid/{foPkid}")
-    public ModelAndView listByFoPkid(@PathVariable(value = "foPkid") Integer foPkid) {
-        ModelAndView mav = new ModelAndView("card");
-        Folder folder = folderService.getById(foPkid);
-        mav.addObject("folder", folder);
-        return mav;
-    }
-
     @PostMapping("submit")
     @ResponseBody
     public List<CardDTO> submit(@RequestBody List<CardDTO> cardList) {
@@ -103,5 +93,11 @@ public class CardController {
     public boolean delete(@RequestBody Card card) {
         boolean delete = service.removeById(card);
         return delete;
+    }
+
+    @PostMapping("listToStudy")
+    @ResponseBody
+    public List<CardDTO> listToStudy(@RequestBody CardQueryDTO query) {
+        return service.listToStudy(query);
     }
 }

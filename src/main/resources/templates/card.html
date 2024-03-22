@@ -338,7 +338,7 @@
                 // Get the current URL
                 var currentUrl = window.location.href;
 
-                var regex = /\/quiz\/card\/listByFoPkid\/(-?\d+)/;
+                var regex = /\/quiz\/portal\/getFolder\/(-?\d+)/;
                 var match = currentUrl.match(regex);
 
                 if (match && match.length > 1) {
@@ -360,7 +360,7 @@
                 }
                 $.ajax({
                     type: "POST",
-                    url: "/quiz/card/searchList",
+                    url: "/quiz/card/listToStudy",
                     data: JSON.stringify(param),
                     dataType: "json",
                     contentType: "application/json",

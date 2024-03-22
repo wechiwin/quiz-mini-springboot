@@ -31,4 +31,6 @@ public interface CardService extends IService<Card> {
 
     Page<CardDTO> searchPage(CardQueryDTO query);
 
+    List<CardDTO> listToStudy(CardQueryDTO query);
+
 }

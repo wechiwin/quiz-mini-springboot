@@ -85,7 +85,7 @@
         },
         methods: {
             handleClickFolder(folder) {
-                window.location.href = '/quiz/card/listByFoPkid/' + folder.foPkid;
+                window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
             },
             handleDark() {
                 let mode = localStorage.getItem('mode')
@@ -96,29 +96,9 @@
                 }
             },
             handleToManage() {
-                window.location.href = "/quiz/manage";
+                window.location.href = "/quiz/portal/manage";
             },
             getList: getList,
-            navigateAndPost(foPkid) {
-                // Perform a POST request using the Fetch API
-                fetch('/quiz/card/listByFoPkid', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({foPkid: foPkid}),
-                })
-                    .then(response => {
-                        // Handle the response as needed
-                        console.log(response);
-                        // If you want to navigate after the POST request, you can use window.location.href
-                        // window.location.href = '/quiz/card?foPkid='+foPkid;
-                    })
-                    .catch(error => {
-                        // Handle errors
-                        console.error(error);
-                    });
-            },
         }
     })
 </script>

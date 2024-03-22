@@ -60,12 +60,14 @@ public class FolderController {
         Map<Integer, List<CardDTO>> foPkidAndCardListMap = cardList.stream().collect(Collectors.groupingBy(CardDTO::getFoPkid));
 
         folderDTOList = folderDTOList.stream()
+                // 判断当日是否学完
                 .peek(folderDTO -> {
                     List<CardDTO> cards = foPkidAndCardListMap.get(folderDTO.getFoPkid());
                     if (CollectionUtils.isEmpty(cards)) {
                         folderDTO.setIfEmptyCards(YesOrNoEnum.Yes.getVal());
                     }
                 })
+                // 排序
                 .sorted(Comparator.comparing(FolderDTO::getFoName))
                 .collect(Collectors.toList());
 
