@@ -2,9 +2,14 @@ package com.moggi.quizmini.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.moggi.quizmini.constant.YesOrNoEnum;
+import com.moggi.quizmini.dto.CardDTO;
+import com.moggi.quizmini.dto.CardQueryDTO;
+import com.moggi.quizmini.dto.FolderDTO;
 import com.moggi.quizmini.dto.FolderQueryDTO;
 import com.moggi.quizmini.entity.Card;
 import com.moggi.quizmini.entity.Folder;
+import com.moggi.quizmini.framework.pojo.Converter;
 import com.moggi.quizmini.service.CardService;
 import com.moggi.quizmini.service.FolderService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -34,8 +40,10 @@ public class FolderController {
     @Autowired
     private CardService cardService;
 
+    private Converter<FolderDTO, Folder> folderConverter = new Converter<>(FolderDTO.class, Folder.class);
+
     @PostMapping("searchList")
-    public List<Folder> searchList(@RequestBody FolderQueryDTO query) {
+    public List<FolderDTO> searchList(@RequestBody FolderQueryDTO query) {
         List<Folder> folderList;
 
         if (StringUtils.isNotBlank(query.getFoName())) {
@@ -46,8 +54,22 @@ public class FolderController {
             folderList = service.list();
         }
 
-        folderList = folderList.stream().sorted(Comparator.comparing(Folder::getFoName)).collect(Collectors.toList());
-        return folderList;
+        List<FolderDTO> folderDTOList = folderConverter.toDtoList(folderList);
+
+        List<CardDTO> cardList = cardService.searchList(new CardQueryDTO());
+        Map<Integer, List<CardDTO>> foPkidAndCardListMap = cardList.stream().collect(Collectors.groupingBy(CardDTO::getFoPkid));
+
+        folderDTOList = folderDTOList.stream()
+                .peek(folderDTO -> {
+                    List<CardDTO> cards = foPkidAndCardListMap.get(folderDTO.getFoPkid());
+                    if (CollectionUtils.isEmpty(cards)) {
+                        folderDTO.setIfEmptyCards(YesOrNoEnum.Yes.getVal());
+                    }
+                })
+                .sorted(Comparator.comparing(FolderDTO::getFoName))
+                .collect(Collectors.toList());
+
+        return folderDTOList;
     }
 
     @PostMapping("add")
