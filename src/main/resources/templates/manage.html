@@ -160,11 +160,6 @@
 
             </div>
 
-            <!--            <div class="right">-->
-            <!--                <button @click="handleAddFolder">Aggiunge +</button>-->
-            <!--            </div>-->
-
-            <!--        folder table -->
             <table class="list-table">
                 <thead>
                 <tr>
@@ -227,8 +222,6 @@
             <button @click="handleClickQuestionOK">OK</button>
             <button @click="handleClickQuestionCancel">Annulla</button>
         </div>
-
-
     </div>
 
 
@@ -389,7 +382,6 @@
                             if (result.status == 200) {
                                 _this.getQuestions();
                                 _this.itemDeleting = false;
-
                             }
                         },
                         error: (error) => {
@@ -400,7 +392,6 @@
 
                     });
                 }
-
             },
 
             handleEditQuestion(index) {
@@ -839,11 +830,6 @@
         background-color: firebrick;
     }
 
-    /*.dark-mode .deleteButton {*/
-    /*    background-color: darkmagenta;*/
-    /*    color: white;*/
-    /*}*/
-
     .deleteButton:hover {
         background-color: darkgray;
     }
@@ -936,15 +922,6 @@
         font-size: 1.2em;
     }
 
-    /*.list-table th {*/
-    /*    background-color: #f2f2f2;*/
-    /*}*/
-
-    /*.dark-mode .list-table th {*/
-    /*    color: var(--dracula-fg);*/
-    /*}*/
-
-
     .fix-button-right {
         position: fixed;
         right: 0;
@@ -999,7 +976,6 @@
     .dark-mode p {
         color: var(--dracula-fg);
     }
-
 
     .search-question {
         width: 50%;

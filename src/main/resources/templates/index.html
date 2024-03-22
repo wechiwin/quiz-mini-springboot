@@ -24,9 +24,6 @@
 
     <div id="folderList" class="list-content">
         <div v-for="folder in list" :key="folder.foPkid">
-            <!--            <a class="list-item" :href="`/quiz/card/listByFoPkid/foPkid=${folder.foPkid}`">{{folder.foName}}</a>-->
-            <!--            <a class="list-item" href="javascript:;" @click="navigateAndPost(folder.foPkid)">{{folder.foName}}</a>-->
-            <!--            <a class="list-item" :href="['/quiz/card/listByFoPkid/'+folder.foPkid]" :disabled="folder.ifEmptyCards===1">{{folder.foName}} </a>-->
             <button class="list-item" @click="handleClickFolder(folder)" :disabled="folder.ifEmptyCards===1">
                 {{folder.foName}}
             </button>
@@ -99,26 +96,6 @@
                 window.location.href = "/quiz/manage";
             },
             getList: getList,
-            navigateAndPost(foPkid) {
-                // Perform a POST request using the Fetch API
-                fetch('/quiz/card/listByFoPkid', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({foPkid: foPkid}),
-                })
-                    .then(response => {
-                        // Handle the response as needed
-                        console.log(response);
-                        // If you want to navigate after the POST request, you can use window.location.href
-                        // window.location.href = '/quiz/card?foPkid='+foPkid;
-                    })
-                    .catch(error => {
-                        // Handle errors
-                        console.error(error);
-                    });
-            },
         }
     })
 </script>
