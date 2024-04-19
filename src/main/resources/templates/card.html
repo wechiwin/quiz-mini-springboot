@@ -83,8 +83,8 @@
   </div>
 
   <div v-else>
-    <h2 class="coral-color"> Tutte finite! 👍😊👍 </h2>
-    <h2 class="coral-color" v-else>Torna a Home entro 3 secondi...</h2>
+    <h2 class="coral-color"><span th:text="#{card.done}">Tutte finite! 👍😊👍</span></h2>
+    <h2 class="coral-color" v-else><span th:text="#{card.doneHint}">Torna a Home entro 3 secondi...</span></h2>
     <button @click="handleToHome">
       👉HomePage
     </button>

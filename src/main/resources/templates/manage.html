@@ -13,7 +13,7 @@
 
 <div id="app">
     <div class="header">
-        <a th:href="@{/}" class="header-text">Studiamo!</a>
+        <a th:href="@{/}" class="header-text" th:text="#{index.title}">Studiamo!</a>
         <button @click="toggleDarkMode" class="fix-button-right">☀️/🌙</button>
     </div>
 
@@ -23,18 +23,20 @@
 
     <div class="content">
         <div v-if="showModifyQuestionContent">
-            <h2>
-                Modifica domande - {{currentFolder}}
-            </h2>
+          <h2>
+            <span th:text="#{manage.editWord}">Modifica domande</span> - {{currentFolder}}
+          </h2>
 
-            <div class="right">
-                <button @click="handleDownloadTemplate">Scarica Template ↓</button>
-                <input type="file" ref="fileInput" style="display: none" @change="handleFileChange">
-                <button @click="handleUploadTemplate" :disabled="loading">Carica Template ↑</button>
-                <button @click="handleAddQuestions">Aggiunge +</button>
-                <button @click="handleGoBackFolder">Torna↩️</button>
-                <button @click="handleRefreshQuestions">Refresh</button>
-            </div>
+          <div class="right">
+            <button @click="handleDownloadTemplate" th:text="#{manage.downloadTemplate}">Scarica Template ↓</button>
+            <input type="file" ref="fileInput" style="display: none" @change="handleFileChange">
+            <button @click="handleUploadTemplate" :disabled="loading" th:text="#{manage.uploadTemplate}">Carica Template
+              ↑
+            </button>
+            <button @click="handleAddQuestions" th:text="#{manage.add}">Aggiunge +</button>
+            <button @click="handleGoBackFolder" th:text="#{manage.goBack}">Torna↩️</button>
+            <button @click="handleRefreshQuestions" th:text="#{manage.refresh}">Refresh</button>
+          </div>
 
             <div class="search-question">
                 <div class="search-input">
@@ -82,11 +84,11 @@
             <table class="list-table" v-show="showModifyQuestionContent">
                 <thead>
                 <tr>
-                    <th>Verbo</th>
-                    <th>Personale</th>
-                    <th>Congiungazione</th>
-                    <th>Esempi</th>
-                    <th>Modifica</th>
+                  <th th:text="#{manage.verb}">Verbo</th>
+                  <th th:text="#{manage.personal}">Personale</th>
+                  <th th:text="#{manage.conjugation}">Congiungazione</th>
+                  <th th:text="#{manage.sentence}">Esempi</th>
+                  <th th:text="#{manage.edit}">Modifica</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -95,12 +97,14 @@
                     <td>{{ item.grammaticalPerson }}</td>
                     <td>{{ item.conjugation }}</td>
                     <td>{{ item.egSentence }}</td>
-                    <td>
-                        <button @click="handleEditQuestion(index)">Modifica</button>
-                        <button @click="handleDeleteQuestion(index)" :disabled="itemDeleting" class="deleteButton">
-                            Elimina
-                        </button>
-                    </td>
+                  <td>
+                    <button @click="handleEditQuestion(index)" th:text="#{manage.edit}">Modifica</button>
+                    <button @click="handleDeleteQuestion(index)" :disabled="itemDeleting" class="deleteButton"
+                            th:text="#{manage.delete}"
+                    >
+                      Elimina
+                    </button>
+                  </td>
                 </tr>
                 </tbody>
             </table>
@@ -140,9 +144,9 @@
         </div>
 
         <div v-else>
-            <h2>
-                Modifica Categorie
-            </h2>
+          <h2 th:text="#{manage.name}">
+            Modifica Categorie
+          </h2>
 
             <div class="search-question">
                 <div class="folder-input">
@@ -153,28 +157,29 @@
                                autocomplete="off"
                                @keyup.enter="getList">
                     </div>
-                    <button @click="getList">Cerca</button>
+                  <button @click="getList" th:text="#{manage.search}">Cerca</button>
                 </div>
 
-                <button @click="handleAddFolder">Aggiunge +</button>
+              <button @click="handleAddFolder" th:text="#{manage.add}">Aggiunge +</button>
 
             </div>
 
             <table class="list-table">
                 <thead>
                 <tr>
-                    <th>Categorie</th>
-                    <th>Modifica</th>
+                  <th th:text="#{manage.categoryName}">Categorie</th>
+                  <th th:text="#{manage.operation}">Modifica</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="(item, index) in list" :key="index">
                     <td @click="handleGoToQuestions(index)" class="manage-folder-name">{{ item.foName }}</td>
                     <td>
-                        <button @click="handleEditFolderName(index)">Modifica</button>
+                      <button @click="handleEditFolderName(index)" th:text="#{manage.edit}">Modifica</button>
                         <!--                        <button @click="handleGoToQuestions(index)">Modifica Domande</button>-->
-                        <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton">Elimina
-                        </button>
+                      <button @click="deleteItem(index)" :disabled="itemDeleting" class="deleteButton"
+                              th:text="#{manage.delete}">Elimina
+                      </button>
                     </td>
                 </tr>
                 </tbody>
@@ -185,7 +190,7 @@
 
 
         <div class="dialog" v-show="showUpdateDialog">
-            <h3>Modifica Categorie</h3>
+          <h3 th:text="#{manage.name}">Modifica Categorie</h3>
             <input type="text" v-model="newCategoryName"
                    style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
             <button @click="handleClickOk(currentIndex)">OK</button>
@@ -197,30 +202,30 @@
             <input type="text" v-model="newCategoryName"
                    style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
             <button @click="handleClickAdd">Add</button>
-            <button @click="handleClickCancelAdd">Annulla</button>
+          <button @click="handleClickCancelAdd" th:text="#{manage.cancel}">Annulla</button>
         </div>
 
         <div class="dialog" v-show="showQuestionDialog">
             <h3>Domande</h3>
             <div class="input-question">
-                <span>Verbo:</span>
+              <span th:text="#{manage.verb}">Verbo:</span>
                 <input type="text" v-model="addQuestion.verb">
             </div>
             <div class="input-question">
-                <span>Personale:</span>
+              <span th:text="#{manage.personal}">Personale:</span>
                 <input type="text" v-model="addQuestion.grammaticalPerson">
             </div>
             <div class="input-question">
-                <span>Congiungazione:</span>
+              <span th:text="#{manage.conjugation}">Congiungazione:</span>
                 <input type="text" v-model="addQuestion.conjugation">
             </div>
             <div class="input-question">
-                <span>Esempi:</span>
+              <span th:text="#{manage.sentence}">Esempi:</span>
                 <input type="text" v-model="addQuestion.egSentence">
             </div>
 
             <button @click="handleClickQuestionOK">OK</button>
-            <button @click="handleClickQuestionCancel">Annulla</button>
+          <button @click="handleClickQuestionCancel" th:text="#{manage.cancel}">Annulla</button>
         </div>
     </div>
 
