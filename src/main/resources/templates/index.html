@@ -17,8 +17,8 @@
 <body>
 <div id="app">
     <div class="header">
-        <a th:href="@{/}" class="header-text">Studiamo!</a>
-        <button @click="handleToManage" class="fix-button-left">Manage🔧</button>
+        <a th:href="@{/}" class="header-text" th:text="#{index.title}">Studiamo!</a>
+        <button @click="handleToManage" class="fix-button-left" th:text="#{index.manage}">Manage🔧</button>
         <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
     </div>
 
@@ -29,6 +29,12 @@
             </button>
         </div>
     </div>
+
+    <button type="button" style="margin: 10px">
+        <a th:href="@{/(lang='en_US')}" id="a1">English</a>
+        <a th:href="@{/(lang='zh_CN')}" id="a2">中文</a>
+        <a th:href="@{/(lang='it_IT')}" id="a3">Italiano</a>
+    </button>
 
 
 </div>

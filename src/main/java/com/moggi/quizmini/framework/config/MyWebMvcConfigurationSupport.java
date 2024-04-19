@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -180,4 +181,10 @@ public class MyWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
     //     argumentResolvers.add(new RequestSingleParamHandlerMethodArgumentResolver());
     //     // super.addArgumentResolvers(argumentResolvers);
     // }
+
+    // 将自定义的国际化组件注入到 Spring
+    @Bean
+    public LocaleResolver localeResolver() {
+        return new MyLocaleResolver();
+    }
 }

@@ -1,88 +1,94 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Studiamo l'italiano</title>
-    <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
-    <!--        <script src="/js/axios.min.js" type="application/javascript"></script>-->
-    <!--        <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
-    <!--    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
-    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
-    <!--    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>-->
-    <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Studiamo l'italiano</title>
+  <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
+  <!--        <script src="/js/axios.min.js" type="application/javascript"></script>-->
+  <!--        <script src="/js/vue@2.6.20.min.js" type="application/javascript"></script>-->
+  <!--    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
+  <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+  <!--    <script type="text/javascript" src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js"></script>-->
+  <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
 </head>
 <body>
 <div id="app" th:attr="data-cardList=${cardList}">
-    <div class="header">
-        <a th:href="@{/}" class="header-text">Studiamo!</a>
-        <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
+  <div class="header">
+    <a th:href="@{/}" class="header-text" th:text="#{index.title}">Studiamo!</a>
+    <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
+  </div>
+
+  <div v-if="cardList.length">
+    <div>
+      <h2>
+        <span th:text="#{card.category}"></span>: <span th:text="${folder.foName}">nome</span>
+      </h2>
     </div>
 
-    <div v-if="cardList.length">
-        <div>
-            <h2>
-                Categoria: <span th:text="${folder.foName}">nome</span>
-            </h2>
-        </div>
-
-        <div v-if="!isCompleted">
-            <div class="list-item" v-for="(question, index) in cardList">
-                <div v-show="(index+1)==currentQuestionIndex">
-                    <!--            <div>-->
-                    <h2>
-                        <span v-if="!isFirstTime">🔔</span>
-                        <span v-if="!isPhrase">
+    <div v-if="!isCompleted">
+      <div class="list-item" v-for="(question, index) in cardList">
+        <div v-show="(index+1)==currentQuestionIndex">
+          <!--            <div>-->
+          <h2>
+            <span v-if="!isFirstTime">🔔</span>
+            <span v-if="!isPhrase">
                              {{ index + 1 }}. {{ question.verb }} -- {{ question.grammaticalPerson }}
                         </span>
-                        <span v-else>
+            <span v-else>
                              {{ index + 1 }}. {{ question.verb }}
                         </span>
 
-                    </h2>
-                    <div class="inputArea">
-                        <input v-if="!isPhrase"
-                               type="text" spellcheck="false" :id="`inputRef${index+1}`"
-                               v-model="question.userAnswer"
-                               autocomplete="off"
-                               @keyup.enter="handleCheckAnswer(question)"
-                               :ref="`inputRef${currentQuestionIndex}`">
+          </h2>
+          <div class="inputArea">
+            <input v-if="!isPhrase"
+                   type="text" spellcheck="false" :id="`inputRef${index+1}`"
+                   v-model="question.userAnswer"
+                   autocomplete="off"
+                   @keyup.enter="handleCheckAnswer(question)"
+                   :ref="`inputRef${currentQuestionIndex}`">
 
-                        <textarea v-else
-                                  v-model="question.userAnswer" autocomplete="off" spellcheck="false"
-                                  :id="`inputRef${index+1}`" :ref="`inputRef${currentQuestionIndex}`"
-                                  @keyup.enter="handleCheckAnswer(question)"
-                        ></textarea>
+            <textarea v-else
+                      v-model="question.userAnswer" autocomplete="off" spellcheck="false"
+                      :id="`inputRef${index+1}`" :ref="`inputRef${currentQuestionIndex}`"
+                      @keyup.enter="handleCheckAnswer(question)"
+            ></textarea>
 
-                        <button @click="handleCheckAnswer" :disabled="question.questionDone">
-                            Controlla
-                        </button>
-                    </div>
+            <button @click="handleCheckAnswer" :disabled="question.questionDone">
+              <span th:text="#{card.submit}">Controlla</span>
+            </button>
+          </div>
 
-                    <div v-show="showCorrectAnswer">
-                        <p class="coral-color">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
-                        <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
-                        <p v-if="question.egSentence">Esempio: <i class="giusta">{{question.egSentence}}</i></p>
-                    </div>
-                </div>
-            </div>
-
-
-            <div>
-                <p>Numero: <span>{{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
-            </div>
-
+          <div v-show="showCorrectAnswer">
+            <!--  TODO 拿值 -->
+            <p class="coral-color">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
+            <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
+            <p v-if="question.egSentence" th:text="#{card.sentence}">Esempio
+              <span>: </span>
+              <i class="giusta">{{question.egSentence}}</i>
+            </p>
+          </div>
         </div>
+      </div>
+
+
+      <div>
+        <p>
+          <span th:text="#{card.number}">Numero</span>
+          <span>: {{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
+      </div>
 
     </div>
 
-    <div v-else>
-        <h2 class="coral-color"> Tutte finite! 👍😊👍 </h2>
-        <h2 class="coral-color" v-else>Torna a Home entro 3 secondi...</h2>
-        <button @click="handleToHome">
-            👉HomePage
-        </button>
-    </div>
+  </div>
+
+  <div v-else>
+    <h2 class="coral-color"> Tutte finite! 👍😊👍 </h2>
+    <h2 class="coral-color" v-else>Torna a Home entro 3 secondi...</h2>
+    <button @click="handleToHome">
+      👉HomePage
+    </button>
+  </div>
 </div>
 
 <script type="text/javascript">

@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 8889
   servlet:
     context-path: /quiz
 
@@ -17,6 +17,9 @@ spring:
     mode: HTML
   mvc:
     static-path-pattern: /static/**
+  messages:
+    basename: i18n.index, i18n.manage, i18n.card
+    encoding: UTF-8
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   configuration:
