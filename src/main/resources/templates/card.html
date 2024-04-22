@@ -63,8 +63,9 @@
             <!--  TODO 拿值 -->
             <p class="coral-color">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
             <p>Risposta Giusta: <i class="correct-color">{{question.conjugation}}</i></p>
-            <p v-if="question.egSentence" th:text="#{card.sentence}">Esempio
-              <span>: </span>
+            <p v-if="question.egSentence">
+              <span th:text="#{card.sentence}"> </span>
+              :
               <i class="correct-color">{{question.egSentence}}</i>
             </p>
           </div>
