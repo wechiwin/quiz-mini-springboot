@@ -62,10 +62,11 @@
           <div v-show="showCorrectAnswer">
             <!--  TODO 拿值 -->
             <p class="coral-color">{{ ifCorrect ? 'Complimenti!👍😊👍' : 'Hai sbagliato!😥😥😥'}}</p>
-            <p>Risposta Giusta: <i class="giusta">{{question.conjugation}}</i></p>
-            <p v-if="question.egSentence" th:text="#{card.sentence}">Esempio
-              <span>: </span>
-              <i class="giusta">{{question.egSentence}}</i>
+            <p>Risposta Giusta: <i class="correct-color">{{question.conjugation}}</i></p>
+            <p v-if="question.egSentence">
+              <span th:text="#{card.sentence}"> </span>
+              :
+              <i class="correct-color">{{question.egSentence}}</i>
             </p>
           </div>
         </div>
@@ -385,9 +386,9 @@
         font-size: 1.4em;
     }
 
-    .giusta {
-        color: darkcyan;
-        font-weight: bold;
+    .correct-color {
+      color: darkcyan;
+      font-weight: bold;
     }
 
     button {
@@ -517,9 +518,9 @@
         color: var(--dracula-purple);
     }
 
-    .dark-mode .giusta {
-        color: var(--dracula-purple);
-        font-weight: bold;
+    .dark-mode .correct-color {
+      color: var(--dracula-purple);
+      font-weight: bold;
     }
 
     .fix-button-right {

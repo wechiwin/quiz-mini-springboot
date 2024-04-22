@@ -20,6 +20,11 @@
         <a th:href="@{/}" class="header-text" th:text="#{index.title}">Studiamo!</a>
         <button @click="handleToManage" class="fix-button-left" th:text="#{index.manage}">Manage🔧</button>
         <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
+        <select class="fix-button-right-lang" v-model="selectedLanguage" @change="changeLanguage(selectedLanguage)">
+            <option value="en_US">English</option>
+            <option value="it_IT">Italiano</option>
+            <option value="zh_CN">中文</option>
+        </select>
     </div>
 
     <div id="folderList" class="list-content">
@@ -30,11 +35,13 @@
         </div>
     </div>
 
-    <button type="button" style="margin: 10px">
-        <a th:href="@{/(lang='en_US')}" id="a1">English</a>
-        <a th:href="@{/(lang='zh_CN')}" id="a2">中文</a>
-        <a th:href="@{/(lang='it_IT')}" id="a3">Italiano</a>
-    </button>
+    <!--    <button type="button" style="margin: 10px">-->
+    <!--        <a th:href="@{/(lang='en_US')}" id="a1">English</a>-->
+    <!--        <a th:href="@{/(lang='zh_CN')}" id="a2">中文</a>-->
+    <!--        <a th:href="@{/(lang='it_IT')}" id="a3">Italiano</a>-->
+    <!--    </button>-->
+
+
 
 
 </div>
@@ -80,6 +87,7 @@
             return {
                 list: [],
                 searchList: '',
+                selectedLanguage: this.getCookie('ClientLanguage') || 'zh_CN',  // 默认语言为英语,
             }
         },
         mounted() {
@@ -87,6 +95,31 @@
             this.getList();
         },
         methods: {
+            changeLanguage(selectedLanguage) {
+                window.location.href = '/quiz/?lang=' + selectedLanguage
+                this.setCookie('ClientLanguage', selectedLanguage, 365); // 设置 cookie 保持一年
+            },
+            // 获取 cookie
+            getCookie(name) {
+                let nameEQ = name + "=";
+                let ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+            // 设置 cookie
+            setCookie(name, value, days) {
+                let expires = "";
+                if (days) {
+                    let date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "") + expires + "; path=/";
+            },
             handleClickFolder(folder) {
                 window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
             },
@@ -157,7 +190,8 @@
         font-weight: bold;
     }
 
-    button {
+
+    button, select {
         padding: 10px 20px;
         margin: 10px;
         border: none;
@@ -169,7 +203,7 @@
         transition: background-color 0.3s ease;
     }
 
-    button:hover {
+    button:hover, select:hover {
         background-color: #0e81d4;
     }
 
@@ -184,6 +218,11 @@
     .fix-button-right {
         position: fixed;
         right: 0;
+    }
+
+    .fix-button-right-lang {
+        position: fixed;
+        right: 6em;
     }
 
     .fix-button-left {
@@ -370,6 +409,7 @@
         outline: none;
         border: 1px solid var(--dracula-cyan);
     }
+
 
     .dark-mode p {
         color: var(--dracula-fg);
