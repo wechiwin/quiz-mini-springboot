@@ -47,7 +47,7 @@ public class MyLocaleResolver implements LocaleResolver {
         }
 
         // 获取默认的地区参数
-        return Locale.getDefault();
+        return Locale.ITALY;
     }
 
     /**
