@@ -18,8 +18,10 @@
         last_review_time
         FROM card
         <where>
-            (last_review_time IS NULL OR last_review_time != date())
-            AND (if_done = 0 OR if_done IS NULL)
+            <if test="query.ifAll == null or query.ifAll == 0">
+                (last_review_time IS NULL OR last_review_time != date())
+                AND (if_done = 0 OR if_done IS NULL)
+            </if>
             <if test="query.foPkid != null and query.foPkid != ''">
                 AND fo_pkid = #{query.foPkid}
             </if>

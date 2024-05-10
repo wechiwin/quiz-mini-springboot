@@ -81,4 +81,7 @@ public class CardQueryDTO extends QueryDTO {
 
     @ApiModelProperty(value = "类别名称")
     private String foName;
+
+    @ApiModelProperty(value = "是否查询所有数据")
+    private Integer ifAll;
 }

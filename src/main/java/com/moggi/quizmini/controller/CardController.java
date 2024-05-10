@@ -5,6 +5,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.moggi.quizmini.constant.YesOrNoEnum;
 import com.moggi.quizmini.dto.CardDTO;
 import com.moggi.quizmini.dto.CardExcelDTO;
 import com.moggi.quizmini.dto.CardQueryDTO;
@@ -71,6 +72,7 @@ public class CardController {
     @PostMapping("searchPage")
     @ResponseBody
     public Page<CardDTO> searchPage(@RequestBody CardQueryDTO query) {
+        query.setIfAll(YesOrNoEnum.Yes.getVal());
         return service.searchPage(query);
     }
 
