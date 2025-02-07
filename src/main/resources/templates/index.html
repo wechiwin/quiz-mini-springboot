@@ -188,7 +188,6 @@
         font-weight: bold;
     }
 
-
     button, select {
         padding: 10px 20px;
         margin: 10px;
@@ -221,14 +220,12 @@
     .fix-button-right-lang {
         position: fixed;
         right: 6em;
-
     }
 
     .fix-button-left {
         position: fixed;
         left: 0;
     }
-
 
     /*移动端*/
     @media screen and (max-width: 750px) {
@@ -386,25 +383,32 @@
         color: var(--dracula-fg);
     }
 
-    .dark-mode button,
-    input,
-    select {
+    .dark-mode select  {
         background-color: var(--dracula-bg);
         color: var(--dracula-fg);
         border: 1px solid var(--dracula-purple);
     }
 
-    .dark-mode button:hover,
-    input:hover,
-    select:hover {
+    .dark-mode button  {
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
+        border: 1px solid var(--dracula-purple);
+    }
+
+
+    .dark-mode button:hover {
         background-color: var(--dracula-bg);
         color: var(--dracula-fg);
         border: 1px solid var(--dracula-pink);
     }
 
-    .dark-mode button:focus,
-    input:focus,
-    select:focus {
+    .dark-mode select:hover {
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
+        border: 1px solid var(--dracula-pink);
+    }
+
+    .dark-mode button:focus, select:focus {
         outline: none;
         border: 1px solid var(--dracula-cyan);
     }
