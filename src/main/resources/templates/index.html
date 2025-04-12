@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Studiamo l'italiano</title>
     <!--    <script src="/common/common-js.js" type="application/javascript"></script>-->
     <!--    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
@@ -14,128 +15,153 @@
     <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
 </head>
-<body>
-<div id="app">
-    <div class="header">
-        <a th:href="@{/}" class="header-text" th:text="#{index.title}">Studiamo!</a>
-        <button @click="handleToManage" class="fix-button-left" th:text="#{index.manage}">Manage🔧</button>
-        <button onclick="toggleDarkMode()" class="fix-button-right">☀️/🌙</button>
-        <select class="fix-button-right-lang" v-model="selectedLanguage" @change="changeLanguage(selectedLanguage)">
-            <option value="en_US">English</option>
-            <option value="it_IT">Italiano</option>
-            <option value="zh_CN">中文</option>
-        </select>
-    </div>
 
-    <div id="folderList" class="list-content">
-        <div v-for="folder in list" :key="folder.foPkid">
-            <button class="list-item" @click="handleClickFolder(folder)" :disabled="folder.ifEmptyCards===1">
-                {{folder.foName}}
-            </button>
+<body>
+    <div id="app">
+        <div class="header">
+            <a th:href="@{/}" class="header-text" th:text="#{index.title}">Studiamo!</a>
+
+            <!-- PC 端直接显示按钮 -->
+            <div class="pc-buttons">
+                <button @click="handleToManage" class="fix-button-left" th:text="#{index.manage}">Manage🔧</button>
+                <button @click="toggleDarkMode" class="fix-button-right">☀️/🌙</button>
+                <select class="fix-button-right-lang" v-model="selectedLanguage"
+                    @change="changeLanguage(selectedLanguage)">
+                    <option value="en_US">English</option>
+                    <option value="it_IT">Italiano</option>
+                    <option value="zh_CN">中文</option>
+                </select>
+            </div>
+
+            <!-- 移动端显示菜单按钮 -->
+            <button class="mobile-menu-button" @click="toggleSidebar">☰</button>
+
+            <!-- 侧边栏 -->
+            <div v-if="isSidebarOpen" class="sidebar">
+                <button class="close-button" @click="toggleSidebar">✖</button>
+                <button @click="toggleDarkMode">☀️/🌙</button>
+                <button @click="handleToManage" th:text="#{index.manage}">Manage🔧</button>
+                <select v-model="selectedLanguage" @change="changeLanguage(selectedLanguage)">
+                    <option value="en_US">English</option>
+                    <option value="it_IT">Italiano</option>
+                    <option value="zh_CN">中文</option>
+                </select>
+            </div>
+
+            <!-- 侧边栏遮罩层 -->
+            <div v-if="isSidebarOpen" class="overlay" @click="toggleSidebar"></div>
+        </div>
+
+        <div id="folderList" class="list-content">
+            <div v-for="folder in list" :key="folder.foPkid">
+                <button class="list-item" @click="handleClickFolder(folder)" :disabled="folder.ifEmptyCards===1"
+                    :style="{'--fill-percent': fillPercent}" :class="{ 'filled': true }">
+                    <span class="folder-name">{{ folder.foName }}</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!--    <button type="button" style="margin: 10px">-->
-    <!--        <a th:href="@{/(lang='en_US')}" id="a1">English</a>-->
-    <!--        <a th:href="@{/(lang='zh_CN')}" id="a2">中文</a>-->
-    <!--        <a th:href="@{/(lang='it_IT')}" id="a3">Italiano</a>-->
-    <!--    </button>-->
+    </div>
 
-
-</div>
-
-</div>
-
-<script type="text/javascript">
-    function toggleDarkMode() {
-        const currentMode = localStorage.getItem('mode') || 'dark';
-        const newMode = currentMode === 'dark' ? 'light' : 'dark';
-
-        document.documentElement.classList.toggle('dark-mode');
-
-        localStorage.setItem('mode', newMode);
-    }
-
-    var getList = function () {
-        var _this = this;
-        var param = {
-            foName: ""
-        };
-        $.ajax({
-            type: "POST",
-            url: "/quiz/folder/searchList",
-            data: JSON.stringify(param),
-            dataType: "json",
-            contentType: "application/json",
-            success: function (result) {
-                if (result.status == 200) {
-                    console.log(result)
-                    _this.list = result.data;
-                }
-            },
-            error: (error) => {
-                alert(error.responseJSON.message)
-                console.log('Error:', error);
-            }
-        });
-    }
-    new Vue({
-        el: '#app',
-        data() {
-            return {
-                list: [],
-                searchList: '',
-                selectedLanguage: this.getCookie('ClientLanguage') || 'zh_CN',  // 默认语言为英语,
-            }
-        },
-        mounted() {
-            this.handleDark()
-            this.getList();
-        },
-        methods: {
-            changeLanguage(selectedLanguage) {
-                window.location.href = '/quiz/?lang=' + selectedLanguage
-                this.setCookie('ClientLanguage', selectedLanguage, 365); // 设置 cookie 保持一年
-            },
-            // 获取 cookie
-            getCookie(name) {
-                let nameEQ = name + "=";
-                let ca = document.cookie.split(';');
-                for (let i = 0; i < ca.length; i++) {
-                    let c = ca[i];
-                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-                }
-                return null;
-            },
-            // 设置 cookie
-            setCookie(name, value, days) {
-                let expires = "";
-                if (days) {
-                    let date = new Date();
-                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                    expires = "; expires=" + date.toUTCString();
-                }
-                document.cookie = name + "=" + (value || "") + expires + "; path=/";
-            },
-            handleClickFolder(folder) {
-                window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
-            },
-            handleDark() {
-                let mode = localStorage.getItem('mode')
-                if (!mode) {
-                    localStorage.setItem('mode', 'light');
-                } else if (mode === 'dark') {
-                    document.documentElement.classList.toggle('dark-mode');
-                }
-            },
-            handleToManage() {
-                window.location.href = "/quiz/portal/manage";
-            },
-            getList: getList,
+    <script type="text/javascript">
+        function toggleDarkMode() {
+            const currentMode = localStorage.getItem('mode') || 'dark';
+            const newMode = currentMode === 'dark' ? 'light' : 'dark';
+            document.documentElement.classList.toggle('dark-mode');
+            localStorage.setItem('mode', newMode);
         }
-    })
-</script>
+
+        var getList = function () {
+            var _this = this;
+            var param = {
+                foName: ""
+            };
+            $.ajax({
+                type: "POST",
+                url: "/quiz/folder/searchList",
+                data: JSON.stringify(param),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (result) {
+                    if (result.status == 200) {
+                        console.log(result)
+                        _this.list = result.data;
+                    }
+                },
+                error: (error) => {
+                    alert(error.responseJSON.message)
+                    console.log('Error:', error);
+                }
+            });
+        }
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    list: [],
+                    searchList: '',
+                    selectedLanguage: this.getCookie('ClientLanguage') || 'zh_CN',  // 默认语言为英语,
+                    isSidebarOpen: false,
+                    fillPercent: "0%"
+                }
+            },
+            mounted() {
+                this.handleDark()
+                this.getList();
+                setTimeout(() => {
+                    this.fillPercent = '45%';
+
+                }, 600); // 100ms后触发动画填充
+            },
+            methods: {
+                toggleSidebar() {
+                    console.log('sidebar!!!!!!!!!!!!');
+                    this.isSidebarOpen = !this.isSidebarOpen;
+                },
+                changeLanguage(selectedLanguage) {
+                    window.location.href = '/quiz/?lang=' + selectedLanguage
+                    this.setCookie('ClientLanguage', selectedLanguage, 365); // 设置 cookie 保持一年
+                },
+                // 获取 cookie
+                getCookie(name) {
+                    let nameEQ = name + "=";
+                    let ca = document.cookie.split(';');
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                    }
+                    return null;
+                },
+                // 设置 cookie
+                setCookie(name, value, days) {
+                    let expires = "";
+                    if (days) {
+                        let date = new Date();
+                        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+                },
+                handleClickFolder(folder) {
+                    window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
+                },
+                handleDark() {
+                    let mode = localStorage.getItem('mode')
+                    if (!mode) {
+                        localStorage.setItem('mode', 'light');
+                    } else if (mode === 'dark') {
+                        document.documentElement.classList.toggle('dark-mode');
+                    }
+                },
+                handleToManage() {
+                    window.location.href = "/quiz/portal/manage";
+                },
+                getList: getList,
+            }
+        })
+    </script>
 </body>
 
 <style>
@@ -156,8 +182,8 @@
     body {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
+            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+            sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-family: 'Arial', sans-serif;
@@ -170,9 +196,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        /*width: 100vw;*/
-        /*background-color: #bcd2e8; !* Twitter-like blue background color *!*/
-        /*border-bottom: 1px solid #0f89d1; !* Slightly darker border color *!*/
+        position: relative;
+        z-index: 1010;
     }
 
     .header-text {
@@ -186,9 +211,26 @@
         margin-inline-start: 0px;
         margin-inline-end: 0px;
         font-weight: bold;
+        margin: 0 auto;
+
+        @media screen and (max-width: 750px) {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            background-color: #f5f8fa;
+        }
     }
 
-    button, select {
+    .dark-mode .header-text{
+        @media screen and (max-width: 750px) {
+            background-color: var(--dracula-bg);
+        }
+    }
+
+    button,
+    select {
         padding: 10px 20px;
         margin: 10px;
         border: none;
@@ -200,7 +242,18 @@
         transition: background-color 0.3s ease;
     }
 
-    button:hover, select:hover {
+    select option{
+        background-color: #ffffff;
+        color: #0e81d4;
+    }
+
+    .dark-mode select option{
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
+    }
+
+    button:hover,
+    select:hover {
         background-color: #0e81d4;
     }
 
@@ -227,154 +280,106 @@
         left: 0;
     }
 
-    /*移动端*/
-    @media screen and (max-width: 750px) {
-        .list-content {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            flex-direction: column;
-            align-items: center;
-            align-content: center;
-        }
-
-        .list-item {
-            display: list-item;
-            width: 200px;
-            line-height: 40px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #e1e8ed;
-            border-radius: 5px;
-            background-color: #ffffff;
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #000000;
-        }
-
-        .list-content {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            flex-direction: column;
-            align-items: center;
-            align-content: center;
-        }
-
-
-        .list-item:hover {
-            outline: none;
-            background-color: #ffffff;
-            border: 1px solid #bd93f9;
-        }
-
-        .list-item:focus {
-            outline: none;
-            background-color: #ffffff;
-            border: 1px solid var(--dracula-pink);
-        }
-
-        .dark-mode .list-item {
-            display: list-item;
-            width: 200px;
-            line-height: 40px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #6272a4; /* Dracula theme border color */
-            border-radius: 5px;
-            background-color: #282a36; /* Dracula theme background color */
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #f8f8f2; /* Dracula theme text color */
-        }
-
-        .dark-mode .list-item:hover {
-            background-color: #44475a; /* Dracula theme hover background color */
-        }
-
-        .dark-mode .list-item:focus {
-            outline: none;
-            border: 1px solid #bd93f9; /* Dracula theme focus border color */
-        }
+    .pc-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
     }
 
-    /*PC端*/
-    @media screen and (min-width: 751px) {
+    .list-content {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        flex-direction: column;
+        height: 86vh;
+        align-items: center;
+        align-content: center;
+        font-size: 18px;
+    }
+
+    .list-item {
+        position: relative;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 250px;
+        line-height: 40px;
+        cursor: pointer;
+        padding: 10px 15px;
+        margin: 10px;
+        border: 1px solid #e1e8ed;
+        border-radius: 5px;
+        background-color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        color: #000000;
+        overflow: hidden;
+        z-index: 1;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* 灌水伪元素 */
+    .list-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background-color: rgba(100, 149, 237, 0.3);
+        z-index: 0;
+        transition: width 1s ease;
+        pointer-events: none;
+    }
+
+    .list-item.filled::before {
+        width: var(--fill-percent, 0%);
+    }
+
+    .list-item:hover::before {
+        background-color: rgba(100, 149, 237, 0.5);
+    }
+
+    /* 文字层样式 */
+    .folder-name {
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+    }
+
+    .dark-mode .list-item {
+        border: 1px solid #6272a4;
+        background-color: #282a36;
+        color: #f8f8f2;
+    }
+
+    .list-item:hover {
+        outline: none;
+        background-color: #ffffff;
+        border: 1px solid #bd93f9;
+    }
+
+    .dark-mode .list-item:hover {
+        background-color: #44475a;
+    }
+
+    .dark-mode .list-item:focus {
+        outline: none;
+        border: 1px solid #bd93f9;
+    }
+
+
+    @media screen and (max-width: 750px) {
         .list-content {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            flex-direction: column;
-            height: 86vh;
-            align-items: center;
-            align-content: center;
-            font-size: 18px;
+            flex-wrap: nowrap;
+            margin-top: 4em;
         }
 
         .list-item {
-            display: list-item;
-            width: 250px;
-            line-height: 40px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #e1e8ed;
-            border-radius: 5px;
-            background-color: #ffffff;
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #000000;
+            width: 18em;
         }
-
-
-        .dark-mode .list-item {
-            display: list-item;
-            width: 200px;
-            line-height: 40px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #6272a4; /* Dracula theme border color */
-            border-radius: 5px;
-            background-color: #282a36; /* Dracula theme background color */
-            transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #f8f8f2; /* Dracula theme text color */
-        }
-
-        .list-item:hover {
-            outline: none;
-            background-color: #ffffff;
-            border: 1px solid #bd93f9;
-        }
-
-        .list-item:focus {
-            outline: none;
-            background-color: #ffffff;
-            border: 1px solid var(--dracula-pink);
-        }
-
-        .dark-mode .list-item:hover {
-            background-color: #44475a; /* Dracula theme hover background color */
-        }
-
-        .dark-mode .list-item:focus {
-            outline: none;
-            border: 1px solid #bd93f9; /* Dracula theme focus border color */
-        }
-
     }
 
     /* Dark Mode */
@@ -383,13 +388,13 @@
         color: var(--dracula-fg);
     }
 
-    .dark-mode select  {
+    .dark-mode select {
         background-color: var(--dracula-bg);
         color: var(--dracula-fg);
         border: 1px solid var(--dracula-purple);
     }
 
-    .dark-mode button  {
+    .dark-mode button {
         background-color: var(--dracula-bg);
         color: var(--dracula-fg);
         border: 1px solid var(--dracula-purple);
@@ -408,7 +413,8 @@
         border: 1px solid var(--dracula-pink);
     }
 
-    .dark-mode button:focus, select:focus {
+    .dark-mode button:focus,
+    select:focus {
         outline: none;
         border: 1px solid var(--dracula-cyan);
     }
@@ -418,7 +424,84 @@
         color: var(--dracula-fg);
     }
 
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 45%;
+        height: 100%;
+        background-color: white;
+        z-index: 1001;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 
+        @media screen and (max-width: 750px) {
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            flex-wrap: wrap;
+        }
+    }
+
+    .dark-mode .sidebar {
+        background-color: var(--dracula-bg);
+        color: var(--dracula-fg);
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+    }
+
+    .mobile-menu-button {
+        display: none;
+        background: none;
+        font-size: 1.5em;
+        color: #1da1f2;
+        padding: 2px 10px;
+        margin: 0 20px;
+        position: fixed;
+        top: 0;
+        left: 3%;
+        transform: translateX(-50%);
+    }
+
+    .dark-mode .mobile-menu-button{
+        border: none;
+    }
+
+    .dark-mode .mobile-menu-button:hover{
+        border: none;
+    }
+
+    .close-button {
+        font-size: 1.5em;
+        background: none;
+        color: #fe686f;
+        border: none;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .dark-mode .close-button {
+        border: none;
+        color: #fe686f;
+    }
+
+
+    @media screen and (max-width: 750px) {
+        .mobile-menu-button {
+            display: block;
+        }
+
+        .pc-buttons {
+            display: none;
+        }
+    }
 </style>
 
 </html>
