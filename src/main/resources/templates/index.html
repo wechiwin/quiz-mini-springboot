@@ -54,7 +54,7 @@
         <div id="folderList" class="list-content">
             <div v-for="folder in list" :key="folder.foPkid">
                 <button class="list-item" @click="handleClickFolder(folder)" :disabled="folder.ifEmptyCards===1"
-                    :style="{'--fill-percent': fillPercent}" :class="{ 'filled': true }">
+                    :style="{'--fill-percent': folder.percentage}" :class="{ 'filled': true }">
                     <span class="folder-name">{{ folder.foName }}</span>
                 </button>
             </div>
@@ -84,7 +84,11 @@
                 success: function (result) {
                     if (result.status == 200) {
                         console.log(result)
-                        _this.list = result.data;
+                        const convertedArray = result.data.map(item => ({
+                            ...item,
+                            percentage: `${(item.percentage * 100).toFixed(0)}%`
+                        }));
+                        _this.list = convertedArray;
                     }
                 },
                 error: (error) => {
@@ -101,20 +105,15 @@
                     searchList: '',
                     selectedLanguage: this.getCookie('ClientLanguage') || 'zh_CN',  // 默认语言为英语,
                     isSidebarOpen: false,
-                    fillPercent: "0%"
                 }
             },
             mounted() {
+                console.log('lllll',this.list);
                 this.handleDark()
                 this.getList();
-                setTimeout(() => {
-                    this.fillPercent = '45%';
-
-                }, 600); // 100ms后触发动画填充
             },
             methods: {
                 toggleSidebar() {
-                    console.log('sidebar!!!!!!!!!!!!');
                     this.isSidebarOpen = !this.isSidebarOpen;
                 },
                 changeLanguage(selectedLanguage) {
