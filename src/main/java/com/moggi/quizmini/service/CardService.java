@@ -33,4 +33,8 @@ public interface CardService extends IService<Card> {
 
     List<CardDTO> listToStudy(CardQueryDTO query);
 
+    List<CardDTO> listRandomToStudy();
+
+    boolean relearn(CardQueryDTO query);
+
 }

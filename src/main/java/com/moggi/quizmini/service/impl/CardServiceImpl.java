@@ -1,6 +1,7 @@
 package com.moggi.quizmini.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -180,5 +181,29 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         Page<CardDTO> page = this.searchPage(query);
         List<CardDTO> records = page.getRecords();
         return records;
+    }
+
+    @Override
+    public List<CardDTO> listRandomToStudy() {
+        Page<CardDTO> cardDTOPage = this.searchPage(new CardQueryDTO());
+        List<CardDTO> records = cardDTOPage.getRecords();
+        return records;
+    }
+
+    @Override
+    @Transactional
+    public boolean relearn(CardQueryDTO query) {
+        Integer foPkid = query.getFoPkid();
+        if (foPkid == null) {
+            throw new RuntimeException("foPkid不能为空");
+        }
+        LambdaUpdateWrapper<Card> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(Card::getIfDone, YesOrNoEnum.No.getVal())
+                .set(Card::getReviewTime, LocalDate.now())
+                .set(Card::getHitTimes, 0)
+                .set(Card::getLastReviewTime, null)
+                .eq(Card::getFoPkid, foPkid);
+        int update = mapper.update(null, updateWrapper);
+        return true;
     }
 }

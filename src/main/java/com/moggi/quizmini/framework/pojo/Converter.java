@@ -2,6 +2,8 @@ package com.moggi.quizmini.framework.pojo;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
+
 @Slf4j
 public class Converter<Dto, Entity> implements IConvert<Dto, Entity> {
     Class<Dto> clazzDto;
@@ -15,8 +17,9 @@ public class Converter<Dto, Entity> implements IConvert<Dto, Entity> {
     @Override
     public Dto createDto() {
         try {
-            return clazzDto.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return clazzDto.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
             log.error(e.getMessage(), e);
         }
         return null;
