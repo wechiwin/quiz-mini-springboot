@@ -3,6 +3,7 @@ package com.moggi.quizmini.mapper;
 
 import com.moggi.quizmini.entity.Folder;
 import com.moggi.quizmini.framework.dao.EnhanceMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -12,6 +13,7 @@ import com.moggi.quizmini.framework.dao.EnhanceMapper;
  * @author wechiwin
  * @since 2024-02-07
  */
+@Mapper
 public interface FolderMapper extends EnhanceMapper<Folder> {
 
 }

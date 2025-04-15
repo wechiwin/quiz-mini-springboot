@@ -14,6 +14,7 @@ import com.moggi.quizmini.excel.ExcelExportHandler;
 import com.moggi.quizmini.excel.ExcelReadListener;
 import com.moggi.quizmini.service.CardService;
 import com.moggi.quizmini.service.FolderService;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -101,5 +102,19 @@ public class CardController {
     @ResponseBody
     public List<CardDTO> listToStudy(@RequestBody CardQueryDTO query) {
         return service.listToStudy(query);
+    }
+
+    @ApiModelProperty("随机学习")
+    @PostMapping("listRandomToStudy")
+    @ResponseBody
+    public List<CardDTO> listRandomToStudy() {
+        return service.listRandomToStudy();
+    }
+
+    @ApiModelProperty("重新学习")
+    @PostMapping("relearn")
+    @ResponseBody
+    public boolean relearn(@RequestBody CardQueryDTO query) {
+        return service.relearn(query);
     }
 }

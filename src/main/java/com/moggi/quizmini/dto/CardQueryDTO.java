@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 卡片对象
@@ -84,4 +85,7 @@ public class CardQueryDTO extends QueryDTO {
 
     @ApiModelProperty(value = "是否查询所有数据")
     private Integer ifAll;
+
+    @ApiModelProperty(value = "folder主键")
+    private List<Integer> foPkidList;
 }

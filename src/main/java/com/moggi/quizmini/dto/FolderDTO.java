@@ -38,4 +38,7 @@ public class FolderDTO implements Serializable {
     // ===== non entity fields =====
     @ApiModelProperty(value = "可学习cards集合是否为空")
     private int ifEmptyCards;
+
+    @ApiModelProperty(value = "整体完成百分比")
+    private double percentage;
 }
