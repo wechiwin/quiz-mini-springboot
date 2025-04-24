@@ -21,26 +21,26 @@
         inner join folder f on f.fo_pkid=c.fo_pkid
         <where>
             <if test="query.ifAll == null or query.ifAll == 0">
-                (last_review_time IS NULL OR last_review_time <![CDATA[ <= ]]> date())
-                AND (if_done = 0 OR if_done IS NULL)
+                (c.last_review_time IS NULL OR c.last_review_time <![CDATA[ <= ]]> date())
+                AND (c.if_done = 0 OR c.if_done IS NULL)
             </if>
             <if test="query.foPkid != null and query.foPkid != ''">
-                AND fo_pkid = #{query.foPkid}
+                AND c.fo_pkid = #{query.foPkid}
             </if>
             <if test="query.grammaticalPerson != null and query.grammaticalPerson != ''">
-                AND grammatical_person = #{query.grammaticalPerson}
+                AND c.grammatical_person = #{query.grammaticalPerson}
             </if>
             <if test="query.verb != null and query.verb != ''">
-                AND verb = #{query.verb}
+                AND c.verb = #{query.verb}
             </if>
             <if test="query.conjugation != null and query.conjugation != ''">
-                AND conjugation like '%'||#{query.conjugation}||'%'
+                AND c.conjugation like '%'||#{query.conjugation}||'%'
             </if>
             <if test="query.egSentence != null and query.egSentence != ''">
-                AND egSentence like '%'||#{query.egSentence}||'%'
+                AND c.egSentence like '%'||#{query.egSentence}||'%'
             </if>
             <if test="query.foPkidList != null and query.foPkidList.size > 0">
-                AND fo_pkid in (
+                AND c.fo_pkid in (
                 <foreach item="item" collection="list" open="" close="" separator=",">
                     #{item}
                 </foreach>
