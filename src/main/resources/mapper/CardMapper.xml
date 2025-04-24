@@ -37,7 +37,7 @@
                 AND c.conjugation like '%'||#{query.conjugation}||'%'
             </if>
             <if test="query.egSentence != null and query.egSentence != ''">
-                AND c.egSentence like '%'||#{query.egSentence}||'%'
+                AND c.eg_sentence like '%'||#{query.egSentence}||'%'
             </if>
             <if test="query.foPkidList != null and query.foPkidList.size > 0">
                 AND c.fo_pkid in (
