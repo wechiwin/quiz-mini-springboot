@@ -37,4 +37,8 @@ public interface CardService extends IService<Card> {
 
     boolean relearn(CardQueryDTO query);
 
+    boolean markAsDone(CardQueryDTO query);
+
+    boolean markAsUndone(CardQueryDTO query);
+
 }

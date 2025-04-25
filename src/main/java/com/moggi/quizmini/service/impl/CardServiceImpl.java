@@ -206,4 +206,35 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         int update = mapper.update(null, updateWrapper);
         return true;
     }
+
+    @Override
+    @Transactional
+    public boolean markAsDone(CardQueryDTO query) {
+        Integer caPkid = query.getCaPkid();
+        if (caPkid == null) {
+            throw new RuntimeException("caPkid不能为空");
+        }
+        LambdaUpdateWrapper<Card> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(Card::getIfDone, YesOrNoEnum.Yes.getVal())
+                .eq(Card::getCaPkid, caPkid);
+        int update = mapper.update(null, updateWrapper);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean markAsUndone(CardQueryDTO query) {
+        Integer caPkid = query.getCaPkid();
+        if (caPkid == null) {
+            throw new RuntimeException("caPkid不能为空");
+        }
+        LambdaUpdateWrapper<Card> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(Card::getIfDone, YesOrNoEnum.No.getVal())
+                .set(Card::getReviewTime, LocalDate.now())
+                .set(Card::getHitTimes, 0)
+                .set(Card::getLastReviewTime, null)
+                .eq(Card::getCaPkid, caPkid);
+        int update = mapper.update(null, updateWrapper);
+        return true;
+    }
 }

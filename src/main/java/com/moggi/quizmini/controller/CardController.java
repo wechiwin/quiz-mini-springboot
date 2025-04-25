@@ -111,10 +111,24 @@ public class CardController {
         return service.listRandomToStudy();
     }
 
-    @ApiModelProperty("重新学习")
+    @ApiModelProperty("重新学习整个folder")
     @PostMapping("relearn")
     @ResponseBody
     public boolean relearn(@RequestBody CardQueryDTO query) {
         return service.relearn(query);
+    }
+
+    @ApiModelProperty("标熟")
+    @PostMapping("markAsDone")
+    @ResponseBody
+    public boolean markAsDone(@RequestBody CardQueryDTO query) {
+        return service.markAsDone(query);
+    }
+
+    @ApiModelProperty("取消标熟")
+    @PostMapping("markAsUndone")
+    @ResponseBody
+    public boolean markAsUndone(@RequestBody CardQueryDTO query) {
+        return service.markAsUndone(query);
     }
 }
