@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -81,6 +82,7 @@ public class CardController {
     @ResponseBody
     public boolean add(@RequestBody Card card) {
         boolean save = service.save(card);
+        card.setReviewTime(LocalDate.now());
         return save;
     }
 
