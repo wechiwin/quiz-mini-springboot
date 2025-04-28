@@ -81,8 +81,8 @@ public class CardController {
     @PostMapping("add")
     @ResponseBody
     public boolean add(@RequestBody Card card) {
-        boolean save = service.save(card);
         card.setReviewTime(LocalDate.now());
+        boolean save = service.save(card);
         return save;
     }
 
