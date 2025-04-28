@@ -71,7 +71,7 @@ public class FolderServiceImpl extends EnhanceService<FolderMapper, FolderDTO, F
                     }
                     // List<Card> allUnDoneCards = cards.stream().filter(item -> item.getIfDone() != 1).collect(Collectors.toList());
                     List<Card> notDoneCards = cards.stream()
-                            .filter(item -> item.getIfDone() != 1 && item.getReviewTime().isBefore(LocalDate.now()))
+                            .filter(item -> item.getIfDone() != 1 && !item.getReviewTime().isAfter(LocalDate.now()))
                             .collect(Collectors.toList());
                     if (CollectionUtils.isEmpty(notDoneCards)) {
                         folderDTO.setIfEmptyCards(YesOrNoEnum.Yes.getVal());
