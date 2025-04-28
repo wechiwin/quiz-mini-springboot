@@ -32,7 +32,7 @@ Vue.component('header-component', {
     props: {
         basePath: {
             type: String,
-            default: '/'
+            default: ''
         }
     },
     data() {

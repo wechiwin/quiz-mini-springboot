@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Studiamo l'italiano</title>
-    <link rel="stylesheet" th:href="@{/static/css/header.css}">
+    <link rel="stylesheet" th:href="@{/static/css/header.css(__${#dates.format(#dates.createNow(), 'yyyyMMddHHmmss')}__)}">
     <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/vue@2.6.20.min.js}"></script>
     <script th:src="@{/static/js/components/HeaderComponent.js}"></script>
@@ -13,10 +13,14 @@
 <body>
 <div id="app">
     <header-component
-            :base-path="'/'"
+            :base-path="'/quiz'"
             @toggle-dark="toggleDarkMode"
             @to-manage="handleToManage"
     ></header-component>
+
+    <button class="random-button">
+        random
+    </button>
 
     <div id="folderList" class="list-content">
         <div v-for="folder in list" :key="folder.foPkid">
