@@ -28,6 +28,7 @@
                     :style="{'--fill-percent': folder.percentage}" :class="{ 'filled': true }">
                 <span class="folder-name">{{ folder.foName }}</span>
             </button>
+            <button v-if="folder.percentage===1">重新学习</button>
         </div>
     </div>
 </div>
