@@ -5,12 +5,14 @@ Vue.component('header-component', {
 
       <div class="pc-buttons">
         <button @click="$emit('to-manage')" class="fix-button-left">{{ getText('index.manage') }}🔧</button>
+        <div class="fix-button-right-lang">
         <button @click="$emit('toggle-dark')">☀️/🌙</button>
-        <select class="fix-button-right-lang" v-model="selectedLanguage" @change="changeLanguage">
+        <select  v-model="selectedLanguage" @change="changeLanguage">
           <option value="en_US">English</option>
           <option value="it_IT">Italiano</option>
           <option value="zh_CN">中文</option>
         </select>
+        </div>
       </div>
 
       <button class="mobile-menu-button" @click="toggleSidebar">☰</button>

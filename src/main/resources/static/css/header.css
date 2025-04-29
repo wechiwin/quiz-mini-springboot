@@ -1,4 +1,4 @@
-    /* Dracula Theme Colors */
+/* Dracula Theme Colors */
 :root {
     --dracula-bg: #282a36;
     --dracula-fg: #f8f8f2;
@@ -31,14 +31,8 @@ body {
     color: #1da1f2;
     text-decoration: underline;
     text-align: center;
-    display: block;
     font-size: 2.2em;
-    margin-block-start: 0.67em;
-    margin-block-end: 0.67em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
     font-weight: bold;
-    margin: 0 auto;
 
     @media screen and (max-width: 750px) {
         position: fixed;
@@ -108,13 +102,12 @@ button:disabled {
 }
 
 .pc-buttons {
-    display: flex;
-    gap: 10px;
     align-items: center;
-    margin: 0 -20px;
+    position: fixed;
+    top: 0;
 }
 
-    /* Dark Mode */
+/* Dark Mode */
 .dark-mode body {
     background-color: var(--dracula-bg);
     color: var(--dracula-fg);
@@ -220,6 +213,7 @@ button:disabled {
     .mobile-menu-button {
         display: block;
     }
+
     .pc-buttons {
         display: none;
     }
