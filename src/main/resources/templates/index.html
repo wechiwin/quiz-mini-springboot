@@ -24,13 +24,16 @@
 
     <div id="folderList" class="list-content">
         <div v-for="folder in list" :key="folder.foPkid">
-            <button class="list-item" @click="handleClickFolder(folder)" :disabled="folder.ifEmptyCards===1"
-                    :style="{'--fill-percent': folder.percentage}" :class="{ 'filled': true }">
-                <span class="folder-name">{{ folder.foName }}</span>
+            <button class="list-item"
+                    @click="handleClickFolder(folder)"
+                    :style="{ '--fill-percent': folder.percentage }"
+                    :class="{ 'filled': true, 'hover-show-rename': folder.percentage === '100%' }">
+                <span class="folder-name foName">{{ folder.foName }}</span>
+                <span class="folder-name reStudy">重新学习</span>
             </button>
-            <button v-if="folder.percentage===1">重新学习</button>
         </div>
     </div>
+
 </div>
 </div>
 
@@ -69,6 +72,7 @@
                         percentage: `${(item.percentage * 100).toFixed(0)}%`
                     }));
                     _this.list = convertedArray;
+                    console.log('percentage',convertedArray)
                 }
             },
             error: (error) => {
@@ -121,7 +125,12 @@
                 document.cookie = name + "=" + (value || "") + expires + "; path=/";
             },
             handleClickFolder(folder) {
-                window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
+                if(folder.ifEmptyCards === 1){
+                    console.log('relearn')
+                }else{
+                    window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
+                }
+
             },
             handleDark() {
                 let mode = localStorage.getItem('mode')
@@ -187,14 +196,6 @@
     button:hover,
     select:hover {
         background-color: #0e81d4;
-    }
-
-    .dark-mode button:disabled {
-        cursor: not-allowed;
-    }
-
-    button:disabled {
-        cursor: not-allowed;
     }
 
     .list-content {
@@ -320,5 +321,24 @@
     .dark-mode p {
         color: var(--dracula-fg);
     }
+    /* 默认状态下隐藏“重新学习” */
+    .reStudy {
+        display: none;
+    }
+
+    /* 默认显示 folder.foName */
+    .foName {
+        display: inline;
+    }
+
+    /* 当按钮带有 hover-show-rename 类并且鼠标悬停时 */
+    .hover-show-rename:hover .reStudy {
+        display: inline;
+    }
+
+    .hover-show-rename:hover .foName {
+        display: none;
+    }
+
 </style>
 </html>
