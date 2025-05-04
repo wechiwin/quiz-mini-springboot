@@ -18,20 +18,20 @@
             @toggle-dark="toggleDarkMode"
             @to-manage="handleToManage"
     ></header-component>
-    <button class="random-button">
-        random
-    </button>
 
     <div id="folderList" class="list-content">
+        <div>
+            <button class="list-item random-item">随机来一组!</button>
+        </div>
         <div v-for="folder in list" :key="folder.foPkid">
             <button class="list-item"
-                    @click="handleClickFolder(folder)"
+                    @click="handleClickFolder(folder)"  
                     :style="{ '--fill-percent': folder.percentage }"
                     :class="{ 'filled': true, 'hover-show-rename': folder.percentage === '100%' }">
                 <span class="folder-name foName">{{ folder.foName }}</span>
                 <span class="folder-name reStudy">重新学习</span>
             </button>
-        </div>
+        </div>        
     </div>
 
 </div>
@@ -72,7 +72,8 @@
                         percentage: `${(item.percentage * 100).toFixed(0)}%`
                     }));
                     _this.list = convertedArray;
-                    console.log('percentage',convertedArray)
+                    convertedArray[14].percentage = '100%';
+                    console.log('convertedArray',convertedArray)
                 }
             },
             error: (error) => {
@@ -230,6 +231,15 @@
         overflow: hidden;
         z-index: 1;
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .random-item{
+        border: 1px solid #0e81d4;
+    }
+
+    .random-item:hover{
+        border: 1px solid #0e81d4;
+
     }
 
     /* 灌水伪元素 */
