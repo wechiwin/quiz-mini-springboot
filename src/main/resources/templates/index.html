@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Studiamo l'italiano</title>
+<!--    <title>{{ getText('index.title') }}</title>-->
+    <title th:text="#{index.title}">默认标题</title>
     <link rel="stylesheet"
           th:href="@{/static/css/header.css(__${#dates.format(#dates.createNow(), 'yyyyMMddHHmmss')}__)}">
     <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
@@ -21,17 +22,17 @@
 
     <div id="folderList" class="list-content">
         <div>
-            <button class="list-item random-item">随机来一组!</button>
+            <button class="list-item random-item" th:text="#{index.random}" @click="handleClickRandom">随机来一组!</button>
         </div>
         <div v-for="folder in list" :key="folder.foPkid">
             <button class="list-item"
-                    @click="handleClickFolder(folder)"  
+                    @click="handleClickFolder(folder)"
                     :style="{ '--fill-percent': folder.percentage }"
                     :class="{ 'filled': true, 'hover-show-rename': folder.percentage === '100%' }">
                 <span class="folder-name foName">{{ folder.foName }}</span>
-                <span class="folder-name reStudy">重新学习</span>
+                <span class="folder-name reStudy" th:text="#{index.relearn}">重新学习</span>
             </button>
-        </div>        
+        </div>
     </div>
 
 </div>
@@ -72,8 +73,6 @@
                         percentage: `${(item.percentage * 100).toFixed(0)}%`
                     }));
                     _this.list = convertedArray;
-                    convertedArray[14].percentage = '100%';
-                    console.log('convertedArray',convertedArray)
                 }
             },
             error: (error) => {
@@ -97,6 +96,9 @@
             this.getList();
         },
         methods: {
+            getText(key) {
+                return window.ThymeleafMessages?.[key] || key;
+            },
             toggleSidebar() {
                 this.isSidebarOpen = !this.isSidebarOpen;
             },
@@ -126,12 +128,50 @@
                 document.cookie = name + "=" + (value || "") + expires + "; path=/";
             },
             handleClickFolder(folder) {
-                if(folder.ifEmptyCards === 1){
+                if (folder.ifEmptyCards === 1) {
                     console.log('relearn')
-                }else{
+                    const parameters={
+                        foPkid:folder.foPkid
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/quiz/card/relearn",
+                        data: JSON.stringify(parameters),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: (result) => {
+                            if (result.status === 200) {
+                                console.log(result)
+                                window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
+                            }
+                        },
+                        error: (error) => {
+                            alert(error.responseJSON.message)
+                            console.log('Error:', error);
+                        }
+                    });
+                } else {
                     window.location.href = '/quiz/portal/getFolder/' + folder.foPkid;
                 }
-
+            },
+            handleClickRandom(){
+                console.log('random')
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/listRandomToStudy",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            console.log(result)
+                            window.location.href = '/quiz/portal/getFolder/' + result.data[0].foPkid;
+                        }
+                    },
+                    error: (error) => {
+                        alert(error.responseJSON.message)
+                        console.log('Error:', error);
+                    }
+                });
             },
             handleDark() {
                 let mode = localStorage.getItem('mode')
@@ -233,13 +273,13 @@
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .random-item{
+    .random-item {
         border: 1px solid #0e81d4;
+        font-weight: bold;
     }
 
-    .random-item:hover{
+    .random-item:hover {
         border: 1px solid #0e81d4;
-
     }
 
     /* 灌水伪元素 */
@@ -331,6 +371,7 @@
     .dark-mode p {
         color: var(--dracula-fg);
     }
+
     /* 默认状态下隐藏“重新学习” */
     .reStudy {
         display: none;

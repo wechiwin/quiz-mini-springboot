@@ -38,7 +38,6 @@
                         <span v-else>
                              {{ index + 1 }}. {{ question.verb }}
                         </span>
-
                     </h2>
                     <div class="inputArea">
                         <input v-if="!isPhrase"
@@ -71,14 +70,23 @@
                             </p>
                         </div>
                     </div>
+
+                    <div>
+                        <button v-if="!question.questionMarkAsDone" @click="handleMarkDone(question,index)">📌
+                        </button>
+                        <button v-else @click="handleMarkUndone(question,index)"
+                                class="cancel-button">👌
+                        </button>
+                    </div>
                 </div>
+
             </div>
-
-
             <div>
                 <p>
                     <span th:text="#{card.number}">Numero</span>
-                    <span>: {{ currentQuestionIndex }} / {{ cardList.length }}</span></p>
+                    <span>: {{ currentQuestionIndex }} / {{ cardList.length }}</span>
+                </p>
+
             </div>
 
         </div>
@@ -113,7 +121,7 @@
                 isFirstTime: true,
                 showGetMoreQuestionButton: true,
                 isPhrase: false,
-                selectedLanguage: this.getCookie('ClientLanguage') || 'zh_CN',
+                selectedLanguage: this.getCookie('ClientLanguage') || 'zh_CN'
             }
         },
         mounted() {
@@ -124,6 +132,56 @@
             console.log(document.cookie)
         },
         methods: {
+            handleMarkDone(question,index) {
+                console.log('done')
+                let parameters = {
+                    "caPkid": question.caPkid,
+                    "foPkid": question.foPkid,
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/markAsDone",
+                    data: JSON.stringify(parameters),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            console.log(result)
+                            this.cardList[index].questionMarkAsDone = true
+                            console.log('this.cardList',this.cardList)
+                        }
+                    },
+                    error: (error) => {
+                        alert(error.responseJSON.message)
+                        console.log('Error:', error);
+                    }
+                });
+            },
+            handleMarkUndone (question,index) {
+                console.log('undone')
+                let parameters = {
+                    "caPkid": question.caPkid,
+                    "foPkid": question.foPkid,
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/quiz/card/markAsUnDone",
+                    data: JSON.stringify(parameters),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: (result) => {
+                        if (result.status === 200) {
+                            console.log(result)
+                            this.cardList[index].questionMarkAsDone = false
+                            console.log('this.cardList',this.cardList)
+                        }
+                    },
+                    error: (error) => {
+                        alert(error.responseJSON.message)
+                        console.log('Error:', error);
+                    }
+                });
+            },
             // 获取 cookie
             getCookie(name) {
                 let nameEQ = name + "=";
@@ -243,7 +301,6 @@
                                 this.total = this.cardList.length
                                 this.handleFirstFocus()
                             }
-
                         }
                     },
                     error: (error) => {
@@ -293,7 +350,11 @@
                                     window.location.href = "/quiz";
                                 }, 3000);
                             } else {
-                                this.cardList = result.data;
+                                // this.cardList = result.data;
+                                this.cardList = result.data.map(item => ({
+                                    ...item,
+                                    questionMarkAsDone: item.ifDone === 1
+                                }));
                                 if (this.containsChinese(this.cardList[0].verb)) {
                                     this.isPhrase = true
                                 } else {
@@ -310,8 +371,6 @@
                         console.log('Error:', error);
                     }
                 });
-
-
             }
         },
         computed: {
@@ -466,16 +525,13 @@
         cursor: not-allowed;
     }
 
+
     .dark-mode button:disabled {
         cursor: not-allowed;
         opacity: 0.6; /* Adjust opacity as desired */
-        /* Optionally, you can also change the color or background color */
-        /* For example, you might want to make the text lighter */
         color: #6272a4; /* Dracula theme disabled button text color */
-        /* And change the background color to make it visually distinct */
         background-color: #1f232b; /* Dracula theme disabled button background color */
     }
-
 
     .fix-button-right {
         position: fixed;
@@ -545,21 +601,6 @@
         background-color: var(--dracula-bg);
         color: var(--dracula-fg);
         border: 1px solid var(--dracula-pink);
-    }
-
-    .dark-mode input:focus {
-        outline: none;
-        border: 1px solid var(--dracula-cyan);
-    }
-
-    .dark-mode button:focus {
-        outline: none;
-        border: 1px solid var(--dracula-cyan);
-    }
-
-    .dark-mode textarea:focus {
-        outline: none;
-        border: 1px solid var(--dracula-cyan);
     }
 
 
