@@ -7,6 +7,9 @@ spring:
   datasource:
     driver-class-name: org.sqlite.JDBC
     url: jdbc:sqlite:./quizmini.db
+    initialization-mode: always
+    continue-on-error: true
+    schema: classpath:schema.sql
   resources:
     static-locations: classpath:/static/
   thymeleaf:
