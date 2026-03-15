@@ -3,3 +3,7 @@
 .idea
 *.iml
 /logs
+test
+.vscode
+*.db
+*.db.*

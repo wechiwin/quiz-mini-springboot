@@ -1,4 +1,4 @@
-CREATE TABLE wrong_list
+CREATE TABLE IF NOT EXISTS wrong_list
 (
     wr_pkid     INT PRIMARY KEY NOT NULL,
     fo_pkid     INT             NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE wrong_list
     modify_time TEXT            NOT NULL
 );
 
-CREATE TABLE folder
+CREATE TABLE IF NOT EXISTS folder
 (
     fo_pkid     INT PRIMARY KEY NOT NULL,
     fo_name     TEXT            NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE folder
     modify_time TEXT            NOT NULL
 );
 
-CREATE TABLE "card"
+CREATE TABLE IF NOT EXISTS card
 (
     ca_pkid            INT           not null
         primary key,
