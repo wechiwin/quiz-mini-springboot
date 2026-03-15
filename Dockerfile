@@ -3,6 +3,6 @@ MAINTAINER moggi
 WORKDIR /
 ADD target/quiz.jar app.jar
 ADD quizmini.db quizmini.db
-EXPOSE 8089
+EXPOSE 8889
 ENTRYPOINT ["java", "-jar"]
 CMD ["app.jar"]

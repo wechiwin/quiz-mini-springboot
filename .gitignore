@@ -5,4 +5,5 @@
 /logs
 test
 .vscode
+*.db
 *.db.*
